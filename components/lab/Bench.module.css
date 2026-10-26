@@ -1,0 +1,228 @@
+/* The ground is set by custom properties so the light and dark benches
+   share every rule below and differ only here. */
+.bench {
+  --b-ink: var(--ink);
+  --b-muted: var(--muted);
+  --b-faint: var(--faint);
+  --b-line: var(--line-strong);
+  --b-accent: var(--accent);
+  --b-tag-bg: var(--ink);
+  --b-tag-fg: var(--page);
+
+  padding-block: clamp(3rem, 7vw, 6rem);
+  border-top: 1px solid var(--line-strong);
+  /* Lands the heading clear of the sticky site bar when jumped to. */
+  scroll-margin-top: 4.5rem;
+  color: var(--b-ink);
+}
+
+.bench[data-tone="dark"] {
+  --b-ink: var(--on-dark);
+  --b-muted: var(--on-dark-muted);
+  --b-faint: #8E8E93;
+  --b-line: #3A3A3C;
+  /* the light accent: the dark ground cannot carry the terracotta as text */
+  --b-accent: var(--accent-soft);
+  --b-tag-bg: var(--on-dark);
+  --b-tag-fg: var(--dark);
+
+  background: var(--dark);
+  border-top: 0;
+  padding-block: clamp(4rem, 9vw, 8rem);
+}
+
+/* The dark band is its own edge, so the bench after it needs no rule. */
+.bench[data-tone="dark"] + .bench { border-top: 0; }
+
+/* The page column is shared by every bench. Beside the sticky index the
+   column steps right to clear it: the index card is 9.5rem wide and sits
+   in the left margin of .wrap, so the content gives it 11rem. */
+.inner { display: grid; gap: clamp(1.75rem, 4vw, 3rem); }
+
+@media (min-width: 1100px) {
+  .inner { padding-left: 11rem; }
+}
+
+/* ── spec row ───────────────────────────────────────────── */
+
+.head { display: grid; gap: clamp(1.25rem, 3vw, 2rem); }
+
+.spec {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  border: 1px solid var(--b-line);
+  font-size: var(--t-small);
+}
+
+.tag {
+  grid-row: span 2;
+  display: grid;
+  align-items: center;
+  padding: var(--s-3) var(--s-4);
+  background: var(--b-tag-bg);
+  color: var(--b-tag-fg);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cell { padding: var(--s-3) var(--s-4); min-width: 0; }
+.cell + .cell { border-top: 1px solid var(--b-line); }
+
+.cell dt { color: var(--b-faint); font-weight: 500; }
+.cell dd { color: var(--b-ink); font-weight: 500; overflow-wrap: anywhere; }
+
+/* The one link in the spec row. .act and .act-nudge give it a right arrow
+   and a press; the colour transition comes from the utility. */
+.projectLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--b-faint);
+}
+@media (hover: hover) {
+  .projectLink:hover { color: var(--b-accent); text-decoration-color: currentColor; }
+}
+
+/* Tablet up: one row of three cells. */
+@media (min-width: 640px) {
+  .spec { grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); }
+  .tag { grid-row: auto; }
+  .cell + .cell { border-top: 0; border-left: 1px solid var(--b-line); }
+  .cell { align-content: center; }
+}
+
+.title {
+  margin: 0;
+  font-size: var(--t-h2);
+  line-height: 1.05;
+  color: var(--b-ink);
+}
+
+.brief { display: grid; gap: var(--s-4); max-width: 46rem; }
+
+.shows {
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  line-height: 1.55;
+  color: var(--b-muted);
+}
+
+/* The one instruction line. It is the difference between a demo and a
+   thing the visitor stares at without knowing what to press. */
+.try {
+  padding-left: var(--s-4);
+  border-left: 2px solid var(--b-accent);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  font-weight: 500;
+  color: var(--b-ink);
+}
+.tryLabel { color: var(--b-accent); font-weight: 700; margin-right: var(--s-1); }
+/* "Try" alone on the light ground is accent text on grey/white: legal for
+   a bold 16px label, and the bar beside it carries the cue regardless. */
+
+@media (min-width: 900px) {
+  .head { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); column-gap: clamp(2rem, 5vw, 5rem); align-items: end; }
+  .spec { grid-column: 1 / -1; }
+  .brief { max-width: none; }
+}
+
+/* ── stage ──────────────────────────────────────────────── */
+
+.stage {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  gap: var(--s-4);
+  padding: clamp(0.75rem, 3vw, 2.5rem);
+  /* graph paper under the object: the bench it is sitting on */
+  background-color: var(--surface-2);
+  background-image: radial-gradient(circle at 1px 1px, var(--line-strong) 1px, transparent 0);
+  background-size: 20px 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-card);
+}
+
+.bench[data-tone="dark"] .stage {
+  background: transparent;
+  border-color: var(--b-line);
+  border-radius: 0;
+  padding: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+/* Beside the index the column is only ~830px at 1100, and the desk screen
+   needs 800 of it: trim the padding rather than make it scroll. */
+@media (min-width: 1100px) and (max-width: 1199px) {
+  .stage { padding-inline: 0.5rem; }
+}
+
+.stageBar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s-1) var(--s-4);
+  font-size: var(--t-small);
+  font-weight: 500;
+  color: var(--b-muted);
+}
+
+.live { display: inline-flex; align-items: center; gap: 0.5em; color: var(--b-ink); }
+.live::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--b-accent);
+}
+
+/* ── what's real ────────────────────────────────────────── */
+
+.notes {
+  display: grid;
+  gap: var(--s-5);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--b-line);
+}
+
+.notesTitle { margin: 0; font-size: var(--t-h3); color: var(--b-ink); }
+
+.cols { display: grid; gap: var(--s-6); }
+@media (min-width: 720px) {
+  .cols { grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); }
+}
+
+.colHead {
+  margin: 0 0 var(--s-3);
+  font-size: var(--t-small);
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--b-faint);
+}
+
+.list { list-style: none; display: grid; gap: var(--s-3); }
+
+.list li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-size: var(--t-small);
+  line-height: 1.6;
+  color: var(--b-muted);
+  max-width: 44ch;
+}
+
+/* Filled square for what is implemented, outline for what is a stand-in.
+   The column heading says it in words; the marker repeats it for a scan. */
+.list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1.5px solid var(--b-ink);
+}
+.real li::before { background: var(--b-ink); }
+.sim li::before { background: transparent; }

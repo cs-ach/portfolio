@@ -1,0 +1,34 @@
+.root { min-width: 0; }
+
+/* Auto margins on the inner box centre it when there is room and collapse
+   to zero when there is not, which is what a scroller wants. Centring with
+   flex would instead push the left edge out of reach. */
+.scroller {
+  overflow-x: auto;
+  /* the desk screen tilts a few degrees toward the pointer; its corners
+     swing a little past the box, and the padding below is what keeps them
+     from being clipped or from growing a vertical scrollbar */
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.inner {
+  flex: none;
+  max-width: none;
+  margin-inline: auto;
+  padding-block: 0.75rem;
+}
+
+.hint {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-bottom: var(--s-3);
+  font-size: var(--t-small);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.scroller:focus-visible { outline-offset: 4px; }

@@ -1,0 +1,59 @@
+/* The cat's box (Oneko.tsx).
+
+   Fixed over the window, between the device layer (800) and the bar
+   (900): the cat should walk over the page and over the projects'
+   3D devices — it is in front of everything the visitor reads — but
+   the navigation is chrome and nothing crosses it.
+
+   The cat is one cell of oneko.gif, a grid of 32x32 frames; the loop
+   picks the cell with `background-position` and the box never changes
+   size, so a pose change costs one property.
+
+   No filter: the sprite has its own outline and reads on light and
+   dark grounds as it is. */
+.cat {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 32px;
+  height: 32px;
+  z-index: 850;
+  pointer-events: none;
+  background-image: url("/oneko/oneko.gif");
+  background-repeat: no-repeat;
+  /* The loop writes `transform` ten times a second and
+     `background-position` only when the pose actually changes. */
+  will-change: transform;
+  /* 32 device-independent pixels of a 32-pixel drawing, which a
+     high-density screen still resamples; keep the pixels square. */
+  image-rendering: pixelated;
+}
+
+/* While the first-load sequence still has the page scaled into its
+   device, nothing of ours belongs on top of it. The cat does not spawn
+   until the loader is over, so this is belt and braces for the frame
+   between the flag being cleared and the spawn landing. */
+:global(html[data-loading]) .cat { visibility: hidden; }
+
+/* ── page transitions ────────────────────────────────────────────────
+   A fixed element with no name of its own is photographed into the old
+   page's snapshot, and the cat would hang there as a still for the
+   length of the move while the live one carried on underneath: two
+   cats, one of them frozen. Naming it lifts it out of the root snapshot
+   (the same trick the device layer uses, globals.css). The old image is
+   dropped and the new one — the live element — is shown as it is, so
+   the cat simply keeps walking across the transition. Above the page,
+   below the bar, matching the stacking above. */
+.cat {
+  view-transition-name: oneko;
+}
+::view-transition-group(oneko) {
+  z-index: 3;
+  animation: none;
+}
+::view-transition-old(oneko) {
+  display: none;
+}
+::view-transition-new(oneko) {
+  animation: none;
+}

@@ -1,0 +1,20 @@
+/* The heading sits in the page's column; the heroes under it run the full
+   width of the window, edge to edge, as they do on the home page. */
+.page { padding-block: clamp(3rem, 7vw, 6rem) clamp(4rem, 8vw, 7rem); }
+
+.head {
+  display: grid;
+  gap: var(--s-4);
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.title { margin: 0; max-width: 12ch; }
+.lead { margin: 0; color: var(--muted); max-width: 48ch; }
+
+.stack { list-style: none; }
+
+.note {
+  margin-top: clamp(2rem, 4vw, 3rem);
+  font-size: var(--t-small);
+  color: var(--faint);
+}

@@ -1,0 +1,225 @@
+/* The case-study page.
+
+   Generous vertical rhythm, one column of reading width for prose, and
+   large tight type for the few statements that carry the argument. The
+   section heads and the metadata grid are shared pieces in
+   components/case; this file is the page's layout around them. */
+
+/* ── intro ────────────────────────────────────────────────── */
+
+.intro { padding-block: clamp(4rem, 10vw, 9rem) clamp(3rem, 7vw, 6rem); }
+
+/* Statement left, facts right, from the width where the statement can
+   hold at least ~14ch at --t-h2. Below that the facts follow it. */
+.introGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2.5rem, 6vw, 5rem);
+  align-items: start;
+}
+
+.statement {
+  font-size: var(--t-h2);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+  max-width: 18ch;
+  margin: 0;
+}
+
+.introCopy {
+  display: grid;
+  gap: var(--s-5);
+  margin-top: clamp(3rem, 7vw, 6rem);
+  max-width: 62ch;
+}
+
+.pitch { margin: 0; color: var(--ink); }
+
+.body {
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 62ch;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+@media (min-width: 900px) {
+  .introGrid { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+}
+
+/* ── showcase ─────────────────────────────────────────────── */
+
+/* Full-bleed, lit like the project hero: one stage tone with a soft
+   spotlight from above, centred on the frame, that falls off to the
+   darker tone at the edges. It is a gradient only, so the band has no seam
+   for a horizontally scrolling frame to sit across on any screen width.
+   The figure casts no shadow. */
+.showcase {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      ellipse 70% 60% at 50% 30%,
+      color-mix(in srgb, var(--stage) 55%, #fff) 0%,
+      var(--stage) 45%,
+      var(--stage-alt) 100%
+    ),
+    var(--stage);
+  padding-block: clamp(3rem, 9vw, 9rem);
+}
+
+.showcaseInner { display: grid; justify-items: center; }
+
+/* The dark frame the interface sits in. It fills the wrap up to a cap:
+   a reading width for the fluid app fragments, and exactly the panel
+   plus padding for the Shell, so the frame hugs it on wide screens and
+   only scrolls once the viewport is narrower than the panel. */
+.figure {
+  --pad: clamp(0.75rem, 2.5vw, 2.25rem);
+  margin: 0;
+  width: 100%;
+  max-width: 56rem;
+  min-width: 0;
+  border-radius: var(--r-band);
+  padding: var(--pad);
+}
+
+/* The frame's own horizontal scroll, so a real-size figure never
+   widens the page. overscroll-behavior keeps a sideways swipe at the
+   end of the frame from turning into a browser back gesture. */
+.scroller {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  border-radius: var(--r-inner);
+}
+.scroller:focus-visible { outline-offset: 4px; }
+
+/* Real size per figure. The Shell scales itself to its container's
+   width, so pinning the container at 800px is what holds it at the
+   panel's true resolution. The app fragments are fluid layouts with
+   their own container queries; they get a sensible reading width and
+   are left to fit. */
+.figure[data-kind="shell"] { max-width: calc(800px + var(--pad) * 2); }
+.figInner { width: 100%; }
+.figure[data-kind="shell"] .figInner { width: 800px; }
+
+.caption {
+  margin: var(--s-4) 0 0;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--on-dark-muted);
+  max-width: 62ch;
+}
+
+/* ── chapters ─────────────────────────────────────────────── */
+
+.section { padding-block: clamp(4rem, 9vw, 8rem); }
+.section + .section { padding-top: 0; }
+
+/* Why left, numbered detail right. The why column is sticky only where
+   there are two columns; stacked, sticking would just cover the rows. */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: start;
+}
+
+.why { margin: 0; max-width: 32ch; color: var(--ink); }
+
+@media (min-width: 900px) {
+  .split { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); }
+  .sticky {
+    position: sticky;
+    top: calc(var(--nav-h) + 2rem);
+  }
+}
+
+.rows,
+.decisions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.row,
+.decision {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: var(--s-4);
+  align-items: baseline;
+  border-top: 1px solid var(--line);
+}
+
+.row { padding-block: clamp(1.25rem, 2.5vw, 1.75rem); }
+
+.rowNum { color: var(--faint); }
+
+.rowText {
+  margin: 0;
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  line-height: 1.65;
+  color: var(--muted);
+  max-width: 62ch;
+}
+
+/* ── states ───────────────────────────────────────────────── */
+
+.statesPanel {
+  border-radius: var(--r-band);
+  padding: clamp(0.75rem, 2.5vw, 2rem);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+/* ── decisions ────────────────────────────────────────────── */
+
+/* The decisions are indented to the same number column as the section
+   head on wide screens, so the questions line up under its title. */
+.decision { padding-block: clamp(1.75rem, 4vw, 3rem); }
+
+.decBody { min-width: 0; }
+
+.decQ {
+  font-size: var(--t-h3);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  max-width: 34ch;
+  margin: 0 0 var(--s-3);
+}
+
+.decA {
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 62ch;
+  margin: 0;
+}
+
+@media (min-width: 900px) {
+  .row,
+  .decision { grid-template-columns: 3.5rem minmax(0, 1fr); }
+}
+
+/* ── live ─────────────────────────────────────────────────── */
+
+/* No radius and no inset: the link panel is hard-edged by design, and a
+   rounded frame around it would contradict it. */
+.liveFig {
+  overflow: hidden;
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+.code {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.875em;
+  background: var(--surface-2);
+  border-radius: 5px;
+  padding: 0.15em 0.4em;
+}

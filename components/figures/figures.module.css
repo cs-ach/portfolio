@@ -1,0 +1,147 @@
+/* Real interface fragments. Inside data-ui the product's own borders, radii
+   and panels are its own conventions, not the page's.
+   taste-skill-ignore */
+
+.fig {
+  background: var(--surface);
+  border: 1px solid #ffffff1f;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 0.9375rem;
+}
+
+.figBar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: 0.75rem 1rem;
+  background: #ffffff0a;
+}
+.figName { font-weight: 600; font-size: 0.9375rem; }
+.figMeta { font-size: 0.8125rem; color: var(--muted); }
+
+/* ── the key chain ─────────────────────────────────────── */
+
+.chain { padding: 1.25rem 1rem 1.5rem; display: grid; gap: 0.6rem; justify-items: center; }
+.chainRow { display: flex; gap: 0.6rem; align-items: stretch; flex-wrap: wrap; justify-content: center; }
+
+.box, .boxMuted, .boxKey, .boxServer {
+  display: grid;
+  gap: 2px;
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  text-align: center;
+}
+.box small, .boxKey small { font-size: 0.75rem; color: var(--muted); font-weight: 400; }
+.box { background: #ffffff14; border: 1px solid #ffffff1f; }
+.boxMuted { background: #ffffff0a; border: 1px solid #ffffff14; color: var(--muted); }
+.boxKey { background: #0a84ff24; border: 1px solid #0a84ff66; color: var(--accent-text); font-weight: 600; }
+.boxServer { background: transparent; border: 1px dashed #ffffff29; color: var(--muted); }
+
+.step { font-size: 0.8125rem; color: var(--muted); text-align: center; }
+.plus { align-self: center; color: var(--muted); }
+
+/* ── the step-up state ─────────────────────────────────── */
+
+.states { padding: 1.25rem 1rem 1.5rem; display: grid; gap: 0.9rem; }
+.stateRow { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.state {
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: #ffffff0a;
+  border: 1px solid #ffffff1f;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.stateOn { background: #30d1582e; border-color: #30d15866; color: #7ee89b; }
+.stateWarn { background: #ff9f0a2e; border-color: #ff9f0a66; color: #ffce7a; }
+.arrow { color: var(--muted); }
+
+.verdict { padding: 0 1rem 1.25rem; font-size: 0.875rem; color: var(--muted); line-height: 1.55; }
+.states .verdict { padding: 0; }
+
+.figBtn {
+  justify-self: start;
+  background: var(--accent-strong);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.6em 1.1em;
+  border-radius: 8px;
+  transition: background var(--d-fast) var(--ease);
+}
+.figBtn:hover { background: var(--accent); }
+.figBtnGhost {
+  justify-self: start;
+  background: #ffffff14;
+  border: 1px solid #ffffff1f;
+  color: var(--ink);
+  font-size: 0.875rem;
+  padding: 0.6em 1.1em;
+  border-radius: 8px;
+}
+.figBtnGhost:hover { background: #ffffff24; }
+
+/* ── neobank ───────────────────────────────────────────── */
+
+.phone { padding: 1.5rem 1rem; display: grid; place-items: center; }
+.card {
+  width: min(100%, 20rem);
+  background: #ffffff0f;
+  border: 1px solid #ffffff1f;
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: grid;
+  gap: 0.4rem;
+}
+.cardWho { font-size: 0.875rem; color: var(--muted); }
+.cardAmount { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; }
+.nums { font-variant-numeric: tabular-nums; }
+.cardNote { font-size: 0.875rem; color: var(--muted); margin-bottom: 0.4rem; }
+
+.badge {
+  justify-self: start;
+  font-size: 0.8125rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  margin-bottom: 0.5rem;
+}
+.pending  { background: #ff9f0a2e; color: #ffce7a; }
+.settled  { background: #30d1582e; color: #7ee89b; }
+.declined { background: #ffffff14; color: var(--muted); }
+
+.cardActions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+/* ── the states strip ──────────────────────────────────── */
+
+.strip {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: var(--s-4);
+}
+/* A fragment the reader can actually look at: the gate counts a data-ui root
+   only at 300 by 200 or more, and below that it is a chip, not a picture. */
+.stateCard {
+  min-width: 300px;
+  min-height: 210px;
+  background: var(--surface);
+  border: 1px solid #ffffff1f;
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  align-content: start;
+}
+.stateLine { padding: 1rem; font-size: 0.9375rem; color: var(--muted); line-height: 1.55; }
+
+.chip {
+  font-size: 0.8125rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.ok   { background: #30d1582e; color: #7ee89b; }
+.warn { background: #ff9f0a2e; color: #ffce7a; }
+.stop { background: #ff453a2e; color: #ff9c94; }

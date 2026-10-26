@@ -1,0 +1,167 @@
+%-------------------------
+% Resume in Latex
+% Author : Jake Gutierrez
+% Based off of: https://github.com/sb2nov/resume
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    \textbf{\Huge \scshape Adwin Chee} \\ \vspace{1pt}
+    \small \href{mailto:adwin.hansen@gmail.com}{\underline{adwin.hansen@gmail.com}} $|$
+    \href{https://www.linkedin.com/in/adwin-chee-42427b354/}{\underline{linkedin.com/in/adwin-chee}} $|$
+    \href{https://github.com/cs-ach}{\underline{github.com/cs-ach}}
+\end{center}
+
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Taylor's University}{Subang Jaya, Malaysia}
+      {Bachelor of Software Engineering (Hons), Extension in Cybersecurity}{Expected Dec. 2026}
+  \resumeSubHeadingListEnd
+
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Software Engineer Intern}{Apr. 2026 -- Dec. 2026 (Expected)}
+      {SeeSharp Solutions Sdn Bhd}{Malaysia}
+      \resumeItemListStart
+        \resumeItem{Delivered features across \textbf{five production repositories} spanning .NET/ABP web platforms, a Next.js dashboard, and a Gatling performance-testing suite, authoring \textbf{400+ commits}.}
+        \resumeItem{Built multi-tenant infrastructure for a \textbf{WhatsApp Business SaaS}, implementing per-tenant connection strings, Meta Cloud API template quality tracking, and consent-based opt-in/opt-out to satisfy Meta messaging compliance requirements.}
+        \resumeItem{Implemented sign-in, sign-out, and redirect flows for an \textbf{authentication consolidation}, moving three separate applications onto a single commercial site with JWT auth, automatic logout on token expiry, and cross-app unauthenticated redirects.}
+        \resumeItem{Hardened campaign and automation services with \textbf{server-side authorization guards} after identifying that inactive message templates were rejected only in the client, allowing the check to be bypassed via direct API calls.}
+        \resumeItem{Reduced a recipient-resolution hot path from an \textbf{N+1 query per recipient to a single batched fetch}, and paginated an unbounded conversation endpoint that had been loading entire tenant histories per request.}
+        \resumeItem{Co-built an internal \textbf{desktop test-automation platform} (Electron, .NET, PostgreSQL), integrating Playwright and Gatling behind a single interface with in-app script recording, reusable nested preconditions, and a CI layer with API-key authentication and remote headless execution.}
+        \resumeItem{Designed and executed \textbf{load, stress, and breakpoint testing} for a high-traffic client web platform across test, staging, and production environments, fixing \textbf{user-ID collisions} across concurrent virtual users that had been silently corrupting results.}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+
+%-----------PROJECTS-----------
+\section{Projects}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+          {\textbf{Zero Trust Architecture Platform} $|$ \emph{Node.js, React, TypeScript, JWT, WebCrypto}}{Oct. 2025 -- Dec. 2025}
+          \resumeItemListStart
+            \resumeItem{Designed a \textbf{continuous-verification session engine} that scores every request rather than trusting a valid credential, accumulating risk from IP changes, idle time, and request-rate anomalies to maintain a live per-session trust score.}
+            \resumeItem{Bound \textbf{token lifetime to trust level} --- 2 hours at full trust, degrading to 5 minutes below a 70 threshold --- with automatic session revocation under 60 and \textbf{step-up authentication} triggered in the 60--80 band.}
+            \resumeItem{Implemented \textbf{hybrid encryption} for file storage: AES-256-GCM authenticated encryption with per-payload IVs, wrapped by RSA-2048 OAEP key encapsulation, plus PBKDF2-SHA256 password hashing at 200,000 iterations.}
+            \resumeItem{Defended against token tampering by pairing JWT signature validation with an independent \textbf{HMAC-SHA256 nonce} and device-ID binding, recomputed and verified on every request.}
+          \resumeItemListEnd
+      \resumeProjectHeading
+          {\textbf{Neobank Prototype} $|$ \emph{Node.js, Express, WebCrypto}}{Dec. 2025}
+          \resumeItemListStart
+            \resumeItem{Applied the zero-trust session and cryptography layers to a \textbf{digital banking prototype}, placing account and transaction endpoints behind the same continuous-verification model.}
+            \resumeItem{Structured the backend into route, service, and infrastructure layers with centralised logging and encrypted-at-rest storage for account records.}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+
+%-----------TECHNICAL SKILLS-----------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: C\#, TypeScript, JavaScript, Java, Python, SQL, HTML/CSS} \\
+     \textbf{Frameworks}{: .NET, ABP Framework, React, Next.js, Node.js, Electron, Express, Hangfire} \\
+     \textbf{Security}{: Zero Trust architecture, AES-256-GCM, RSA-OAEP, PBKDF2, HMAC, JWT, OAuth/OpenIddict, threat modelling} \\
+     \textbf{Testing}{: Playwright, Gatling, load, stress \& breakpoint testing} \\
+     \textbf{Tools \& Databases}{: Git, Docker, GitHub Actions, Postman, Maven, PostgreSQL, SQLite}
+    }}
+ \end{itemize}
+
+
+%-------------------------------------------
+\end{document}

@@ -1,0 +1,870 @@
+/* Industrial brutalist, on purpose: a test-bench panel, not a card.
+   Square corners, 1px and 2px rules, one signal colour. Amber is reserved
+   for things that are live (a frame in flight, a value that just changed, a
+   fault); everything static is ink on near-black. There are no gradients
+   except the hard-stop hazard stripe, and no shadows at all.
+
+   The figure sizes itself against its own width with a container query, not
+   the viewport, because it is dropped into columns of very different widths
+   (the case study and the Lab page). Narrow is the base case: the endpoints
+   stack and the wire turns vertical. */
+
+.plate {
+  --g-ground: #0a0a09;
+  --g-ink: #ede9df;
+  --g-dim: #9a978c;
+  --g-hair: rgba(237, 233, 223, 0.28);
+  --g-signal: #ff6a00;
+  --g-mono: var(--font-mono), ui-monospace, monospace;
+
+  container: link / inline-size;
+  position: relative;
+  margin: 10px;
+  background: var(--g-ground);
+  color: var(--g-ink);
+  border: 2px solid var(--g-ink);
+  font-family: var(--g-mono);
+  font-size: 12px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+  border-radius: 0;
+  min-width: 0;
+}
+
+.plate *,
+.plate *::before,
+.plate *::after {
+  box-sizing: border-box;
+  border-radius: 0;
+}
+
+.plate h3,
+.plate p,
+.plate dl,
+.plate dd,
+.plate ol,
+.plate ul {
+  margin: 0;
+  padding: 0;
+}
+
+.plate ol,
+.plate ul {
+  list-style: none;
+}
+
+.plate h3 {
+  font: inherit;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.plate :focus-visible {
+  outline: 2px solid var(--g-ink);
+  outline-offset: 3px;
+  border-radius: 0;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── registration marks ─────────────────────────────────────
+   Four crosshairs just outside the corners. Decorative, sparing. */
+
+.reg {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  background:
+    linear-gradient(var(--g-ink), var(--g-ink)) center / 1px 100% no-repeat,
+    linear-gradient(var(--g-ink), var(--g-ink)) center / 100% 1px no-repeat;
+  pointer-events: none;
+}
+.regA { top: -9px; left: -9px; }
+.regB { top: -9px; right: -9px; }
+.regC { bottom: -9px; left: -9px; }
+.regD { bottom: -9px; right: -9px; }
+
+/* ── title bar ──────────────────────────────────────────── */
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--g-ink);
+}
+
+.barTitle {
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.barMeta {
+  color: var(--g-dim);
+  letter-spacing: 0.06em;
+  display: none;
+}
+
+.status {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border: 2px solid var(--g-ink);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+.statusLed {
+  width: 10px;
+  height: 10px;
+  background: var(--g-signal);
+  flex: none;
+}
+
+.stNeg .statusLed {
+  background: transparent;
+  border: 2px solid var(--g-signal);
+}
+
+.stNeg { color: var(--g-signal); border-color: var(--g-signal); }
+
+.stDown {
+  color: var(--g-signal);
+  border-color: var(--g-signal);
+}
+
+/* Hard-stop hazard stripe, shown only while the link is down. */
+.hazard {
+  height: 10px;
+  border-bottom: 2px solid var(--g-ink);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--g-signal) 0 8px,
+    var(--g-ground) 8px 16px
+  );
+}
+
+/* ── rig: host / wire / device ──────────────────────────── */
+
+.rig {
+  --vert: 1;
+  --chip-w: 84px;
+  --chip-h: 34px;
+  --cut-dir: to bottom;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-bottom: 2px solid var(--g-ink);
+}
+
+.endpoint {
+  min-width: 0;
+  padding: 14px;
+}
+
+.endpoint:first-child { border-bottom: 2px solid var(--g-ink); }
+
+.epHead {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.epTag {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  flex: none;
+  border: 2px solid var(--g-ink);
+  font-size: 1.75rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.epId { min-width: 0; align-self: center; }
+
+.epName {
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.epPart {
+  margin-top: 4px;
+  color: var(--g-dim);
+  letter-spacing: 0.04em;
+  overflow-wrap: anywhere;
+}
+
+.epSub,
+.epFoot {
+  margin-top: 10px;
+  color: var(--g-dim);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.epFoot { margin-top: 8px; }
+
+/* module rows */
+
+.mods { margin-top: 12px; }
+
+.mod {
+  display: grid;
+  grid-template-columns: 2.2em minmax(0, 1fr) auto 3ch;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  margin-top: -2px;
+  padding: 8px 10px;
+  background: transparent;
+  color: var(--g-ink);
+  border: 2px solid var(--g-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mods li:first-child .mod { margin-top: 0; }
+
+/* The module's state is a lamp, the way a patch panel shows a live
+   channel: the index cell fills with the signal colour while it is on.
+   A square indicator reads as hardware; a coloured stripe down the edge
+   of the row only reads as decoration. */
+.modIdx {
+  display: grid;
+  place-items: center;
+  height: 1.9em;
+  border: 1px solid var(--g-hair);
+}
+.mod[aria-pressed="true"] .modIdx {
+  background: var(--g-signal);
+  border-color: var(--g-signal);
+  color: var(--g-ground);
+}
+
+.mod:hover { background: rgba(237, 233, 223, 0.1); }
+
+.modHit {
+  background: var(--g-signal);
+  color: var(--g-ground);
+}
+.modHit:hover { background: var(--g-signal); }
+
+.modIdx { color: var(--g-dim); }
+.modHit .modIdx,
+.modHit .modSize,
+.modHit .modOn { color: var(--g-ground); }
+
+.modName { overflow-wrap: anywhere; }
+.modSize { color: var(--g-dim); }
+
+.modState {
+  font-weight: 500;
+  color: var(--g-dim);
+  text-align: right;
+}
+
+.modOn { color: var(--g-signal); }
+
+.ctlRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.peer {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--g-hair);
+  font-size: 11px;
+}
+.peer dt { color: var(--g-dim); letter-spacing: 0.06em; text-transform: uppercase; }
+.peer dd { margin-top: 2px; color: var(--g-ink); overflow-wrap: anywhere; }
+
+/* ── buttons ────────────────────────────────────────────── */
+
+.btn {
+  min-height: 44px;
+  padding: 8px 12px;
+  background: transparent;
+  color: var(--g-ink);
+  border: 2px solid var(--g-ink);
+  font: inherit;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--g-ink);
+  color: var(--g-ground);
+}
+
+.btn[aria-pressed="true"] {
+  border-color: var(--g-signal);
+  color: var(--g-signal);
+}
+.btn[aria-pressed="true"]:hover:not(:disabled) {
+  background: var(--g-signal);
+  color: var(--g-ground);
+}
+
+.btn:disabled {
+  color: var(--g-dim);
+  border-color: var(--g-hair);
+  cursor: not-allowed;
+}
+
+.btnMain { background: var(--g-ink); color: var(--g-ground); }
+.btnMain:hover:not(:disabled) { background: var(--g-signal); border-color: var(--g-signal); color: var(--g-ground); }
+
+/* ── wire ───────────────────────────────────────────────── */
+
+.wire {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 30px;
+  gap: 0 8px;
+  height: 220px;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--g-ink);
+  background: var(--g-ground);
+}
+
+.lane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.laneLabel {
+  height: 16px;
+  color: var(--g-dim);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.aH { display: none; font-style: normal; }
+.aV { font-style: normal; }
+
+.rail {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.railLine {
+  position: absolute;
+  background: var(--g-ink);
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+}
+
+/* the pins at each end of a rail */
+.railLine::before,
+.railLine::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--g-ink);
+  left: -4px;
+}
+.railLine::before { top: 0; }
+.railLine::after { bottom: 0; }
+
+.railGnd { background: var(--g-dim); }
+.railGnd::before,
+.railGnd::after { background: var(--g-dim); }
+
+/* Cable pulled: the rail breaks in the middle and an X marks the gap. */
+.rail[data-cut="true"] .railLine {
+  background: linear-gradient(
+    var(--cut-dir),
+    var(--g-ink) 0 38%,
+    transparent 38% 62%,
+    var(--g-ink) 62% 100%
+  );
+}
+.rail[data-cut="true"]::after {
+  content: "\00d7";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--g-signal);
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+/* A frame in flight: a solid signal block with the bytes it carries. */
+.chip {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: var(--chip-w);
+  height: var(--chip-h);
+  margin-left: calc(var(--chip-w) / -2);
+  padding: 3px 5px;
+  overflow: hidden;
+  background: var(--g-signal);
+  color: var(--g-ground);
+  font-size: 10px;
+  line-height: 14px;
+  z-index: 1;
+}
+
+.chipName { display: block; font-weight: 500; letter-spacing: 0.04em; white-space: nowrap; }
+
+.chipBytes {
+  display: flex;
+  gap: 0.5ch;
+  white-space: nowrap;
+}
+
+/* ── device screen ──────────────────────────────────────── */
+
+.screen {
+  position: relative;
+  container-type: inline-size;
+  width: 100%;
+  aspect-ratio: 5 / 3;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #000;
+  border: 2px solid var(--g-ink);
+}
+
+/* cq units on the container itself resolve against the plate, so the type
+   size is set on its children, where they resolve against the screen. */
+.screen > * { font-size: max(9px, 3.6cqw); }
+
+.sBar {
+  display: flex;
+  justify-content: space-between;
+  gap: 2cqw;
+  padding: 1.4cqw 2.4cqw;
+  border-bottom: 1px solid var(--g-hair);
+  color: var(--g-dim);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.sLinkOn { color: var(--g-signal); }
+.sLinkOff { color: var(--g-ink); }
+
+.sBody {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 1.5cqw;
+  padding: 1.5cqw;
+}
+
+.widget {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.6cqw;
+  min-width: 0;
+  min-height: 0;
+  padding: 1.6cqw;
+  overflow: hidden;
+  background: transparent;
+  color: var(--g-ink);
+  border: 1px solid var(--g-dim);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.widget:disabled { cursor: default; }
+.widget:hover:not(:disabled) { border-color: var(--g-ink); }
+
+.wWeather { grid-column: span 2; grid-row: span 2; }
+.wCal { grid-column: span 2; }
+.wNow { grid-column: span 4; }
+
+/* A freshly landed STATE inverts the widget for half a second: one hard
+   change, not a blink. */
+.wFlash {
+  background: var(--g-signal);
+  color: #000;
+  border-color: var(--g-signal);
+}
+.wFlash .wTag,
+.wFlash .wSub { color: #000; }
+
+.wTag {
+  color: var(--g-dim);
+  font-size: 0.78em;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wBig {
+  font-size: 4.2em;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.wMid {
+  font-size: 1.25em;
+  font-weight: 500;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wSub {
+  color: var(--g-dim);
+  font-size: 0.78em;
+  letter-spacing: 0.08em;
+}
+
+.sEmpty {
+  grid-column: 1 / -1;
+  align-self: center;
+  text-align: center;
+  color: var(--g-dim);
+  letter-spacing: 0.1em;
+}
+
+.sAuth {
+  position: absolute;
+  inset: 14% 8% 16%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1cqw;
+  padding: 3cqw;
+  background: #000;
+  border: 2px solid var(--g-signal);
+}
+.sAuth .wMid { color: var(--g-signal); }
+
+.sBanner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1.2cqw 2cqw;
+  background: var(--g-signal);
+  color: #000;
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+/* ── stats + controls ───────────────────────────────────── */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-bottom: 2px solid var(--g-ink);
+}
+
+.stat {
+  padding: 10px 14px 12px;
+  border-right: 1px solid var(--g-hair);
+  border-bottom: 1px solid var(--g-hair);
+  min-width: 0;
+}
+.stat:nth-child(2n) { border-right: 0; }
+.stat:last-child { grid-column: 1 / -1; border-bottom: 0; border-right: 0; }
+
+.stat dt {
+  color: var(--g-dim);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.stat dd {
+  margin-top: 2px;
+  font-size: clamp(1.6rem, 9cqi, 2.4rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat:first-child dd,
+.statErr dd { color: var(--g-signal); }
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 2px solid var(--g-ink);
+}
+
+.retry {
+  flex: 1 1 200px;
+  min-width: 0;
+  color: var(--g-dim);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+.retryOn { color: var(--g-signal); font-weight: 500; }
+
+/* ── panels: log, handshake, anatomy ────────────────────── */
+
+.lower {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.logWrap { min-width: 0; border-bottom: 2px solid var(--g-ink); }
+
+.side {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  border-bottom: 2px solid var(--g-ink);
+}
+
+.neg { border-bottom: 2px solid var(--g-ink); }
+
+.panelHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--g-hair);
+}
+
+.panelTitle { font-size: 11px; }
+.panelNote { color: var(--g-dim); font-size: 10px; letter-spacing: 0.06em; }
+
+/* the log: fixed height, clipped, so arrivals never push the page around */
+.log {
+  height: 24rem;
+  overflow: hidden;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 7ch 1.6ch minmax(0, 1fr) auto;
+  gap: 0 10px;
+  padding: 6px 12px;
+  border-top: 1px solid var(--g-hair);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.row:first-child { border-top: 0; }
+
+/* The newest frame is set in the signal colour on a faint wash of it, like
+   the line a terminal has just printed, rather than flagged with a stripe. */
+.rowLive {
+  color: var(--g-signal);
+  background: color-mix(in srgb, var(--g-signal) 10%, transparent);
+}
+.rowBad { color: var(--g-signal); }
+.rowBad .rStat { font-weight: 500; }
+.rowSys { color: var(--g-dim); }
+
+.rTime { color: var(--g-dim); white-space: nowrap; }
+.rowLive .rTime,
+.rowBad .rTime { color: inherit; }
+
+.rDir { font-weight: 500; }
+.rName { font-weight: 500; letter-spacing: 0.04em; overflow-wrap: anywhere; }
+.retx { margin-left: 6px; font-style: normal; color: var(--g-signal); }
+.rowLive .retx { color: inherit; }
+
+.rSum {
+  grid-column: 1 / -1;
+  order: 5;
+  color: var(--g-dim);
+  overflow-wrap: anywhere;
+}
+.rowLive .rSum,
+.rowBad .rSum { color: inherit; }
+
+.rStat { text-align: right; white-space: nowrap; }
+
+.rHex {
+  grid-column: 1 / -1;
+  order: 6;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.7ch;
+  color: var(--g-ink);
+  letter-spacing: 0.02em;
+}
+.rowLive .rHex,
+.rowBad .rHex { color: inherit; }
+
+.rSys { grid-column: 2 / -1; overflow-wrap: anywhere; }
+
+.flip {
+  background: var(--g-signal);
+  color: var(--g-ground);
+}
+.more { color: var(--g-dim); }
+
+/* handshake */
+
+.steps { padding: 6px 12px 10px; }
+
+.step {
+  display: grid;
+  grid-template-columns: 2ch 5ch 1.4ch minmax(0, 1fr) auto;
+  gap: 0 8px;
+  padding: 5px 0;
+  border-top: 1px solid var(--g-hair);
+  color: var(--g-dim);
+}
+.step:first-child { border-top: 0; }
+
+.stepDone { color: var(--g-ink); }
+.stepActive { color: var(--g-signal); }
+.stepState { font-weight: 500; text-align: right; }
+.stepDone .stepState { color: var(--g-signal); }
+.stepFinal { border-top: 2px solid var(--g-ink); margin-top: 4px; padding-top: 8px; }
+
+/* anatomy */
+
+.anat { padding-bottom: 12px; }
+
+.segs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 10px 12px 0;
+}
+
+.seg {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  margin: 0 -1px -1px 0;
+  padding: 6px 8px;
+  border: 1px solid var(--g-ink);
+}
+.segWide { flex: 1 1 auto; }
+
+.segK { color: var(--g-dim); font-size: 9px; letter-spacing: 0.08em; white-space: nowrap; }
+
+.segV {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.6ch;
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.segD { color: var(--g-dim); font-size: 10px; overflow-wrap: anywhere; }
+
+.crcLine { margin: 14px 12px 0; color: var(--g-dim); font-size: 11px; overflow-wrap: anywhere; }
+.crcBad { color: var(--g-signal); font-weight: 500; }
+
+.anatEmpty { padding: 12px; color: var(--g-dim); }
+
+.note {
+  padding: 10px 14px;
+  color: var(--g-dim);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+/* ── wide: the rig runs left to right ───────────────────── */
+
+@container link (min-width: 520px) {
+  .barMeta { display: inline; }
+
+  .stats { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .stat,
+  .stat:nth-child(2n) { border-right: 1px solid var(--g-hair); border-bottom: 0; }
+  .stat:last-child { grid-column: auto; border-right: 0; }
+}
+
+@container link (min-width: 760px) {
+  .rig {
+    --vert: 0;
+    --chip-w: 116px;
+    --cut-dir: to right;
+    grid-template-columns: minmax(0, 1fr) minmax(170px, 0.7fr) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .endpoint:first-child { border-bottom: 0; }
+
+  .wire {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    gap: 6px 0;
+    height: auto;
+    padding: 12px;
+    border-bottom: 0;
+    border-inline: 2px solid var(--g-ink);
+  }
+
+  .laneLabel { text-align: left; }
+  .aH { display: inline; }
+  .aV { display: none; }
+
+  .rail { flex: none; height: 40px; }
+
+  .railLine {
+    left: 0;
+    right: 0;
+    top: 50%;
+    bottom: auto;
+    width: auto;
+    height: 2px;
+    margin: -1px 0 0;
+  }
+  .railLine::before,
+  .railLine::after { left: auto; top: -4px; bottom: auto; }
+  .railLine::before { left: 0; }
+  .railLine::after { right: 0; }
+
+  .chip {
+    left: 0;
+    top: 50%;
+    margin-left: 0;
+    margin-top: calc(var(--chip-h) / -2);
+  }
+
+  .laneGnd .rail { height: 16px; }
+
+  .lower { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+  .logWrap { border-bottom: 2px solid var(--g-ink); border-right: 2px solid var(--g-ink); }
+}

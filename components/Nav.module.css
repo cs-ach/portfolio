@@ -1,0 +1,82 @@
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  background: color-mix(in srgb, var(--page) 72%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--d-base) var(--ease), background-color var(--d-base) var(--ease);
+}
+.bar[data-lifted] {
+  border-bottom-color: var(--line);
+  background: color-mix(in srgb, var(--page) 88%, transparent);
+}
+
+.inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-block: 0.875rem;
+}
+
+.wordmark {
+  font-size: var(--t-small);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(0.875rem, 2vw, 1.75rem);
+}
+
+/* Both the wordmark and the links carry `.act`, which brings the
+   transition list and the press scale; what they brighten *to* is
+   local, so it is stated here. A press on something this small would
+   disappear at the shared 0.97, so both tighten it. */
+.wordmark { --press: 0.94; }
+
+.link {
+  --press: 0.94;
+  font-size: var(--t-small);
+  color: var(--muted);
+  padding-block: 0.4em;
+}
+.link[aria-current="page"] { color: var(--ink); font-weight: 500; }
+
+@media (hover: hover) {
+  .link:hover { color: var(--ink); }
+  /* The wordmark is already the darkest thing in the bar, so it
+     answers by fading rather than by darkening further. */
+  .wordmark:hover { opacity: 0.6; }
+}
+
+/* The bar's own call to action is smaller than the page's pills. */
+.cta {
+  min-height: 36px;
+  padding-inline: 1.1rem;
+  font-size: var(--t-small);
+}
+
+/* Sized off the label rather than fixed, so the arrow stays in
+   proportion if the bar's type scale ever moves. The negative margin
+   pulls the pill's right padding back in: an arrow needs less air
+   after it than a letter does, or the pill looks lopsided. */
+.arrow {
+  width: 1em;
+  height: 1em;
+  margin-right: -0.25em;
+  flex: none;
+}
+
+@media (max-width: 620px) {
+  .inner { justify-content: center; }
+  .wordmark { flex: 1 1 100%; text-align: center; }
+  .nav { justify-content: center; }
+}

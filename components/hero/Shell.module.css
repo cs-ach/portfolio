@@ -1,0 +1,790 @@
+/* The product's own interface, recreated in HTML at its real 800x480.
+
+   Every number here is from pi/src/screens/*.slint, not invented:
+
+     tokens.slint   rhythm 14 (edge, dock_margin, gap, grid_gap); dock_w 68,
+                    dock_slot 48, dock_gap 7; status_h 30; r_dock 20,
+                    r_panel 28, r_group 24, r_nested 14; type ramp display 48,
+                    title 21, headline 17, body 15, caption 13, label 12;
+                    content_x 96, content_w 690, slot_y 58, slot_h 408,
+                    cell_w 162, cell_h 197; bg_tide, the glass tints, the rims
+                    and the semantic colours.
+     dock.slint     dock height = items * (48 + 7) + 146, vertically centred;
+                    slots at 12 + i * 55, rule at 16 + n * 55, switcher at
+                    29 + n * 55, settings at 85 + n * 55.
+     glass.slint    a glass surface is panel fill + a 180deg tint + a hairline
+                    + a lit top rim inset by radius/2 + a dim bottom rim.
+     slot.slint     padding 20, title caption/600/text_3, value display/700 at
+                    -2px tracking with a 19px unit, headline title/700,
+                    detail caption/500/text_2; a slot under 200px wide drops
+                    the value and runs headline/detail at 17/13.
+     status_bar.slint, switcher.slint, settings.slint, controls.slint for the
+                    rest, and plugins/spotify for the widget and its page.
+
+   The root carries data-ui: inside it the product's radii, hairlines and
+   shadows are its own and the page's rules do not apply.
+   taste-skill-ignore */
+
+.stage {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  perspective: 1600px;
+}
+
+.tilt {
+  --rx: 0deg;
+  --ry: 0deg;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transform-style: preserve-3d;
+  transition: transform 700ms var(--ease);
+  width: min(100%, 800px);
+}
+
+/* true 800x480, scaled down by width only so the geometry never distorts */
+.screen {
+  /* tokens.slint — material */
+  --glass-top: #ffffff14;     /* glass_tint_top */
+  --glass-bottom: #ffffff08;  /* glass_tint_bottom */
+  --glass-border: #ffffff21;
+  --rim-top: #ffffff3d;
+  --rim-hairline: #ffffff1f;
+  --rim-bottom: #ffffff0f;
+  --chip-fill: #ffffff1c;
+  --panel: #ffffff14;
+  --selected: #ffffff24;
+  --selected-edge: #ffffff52;
+  --separator: #ffffff1a;
+  /* tokens.slint — ink */
+  --t1: #ffffff;
+  --t2: #ffffffb0;
+  --t3: #ffffff8a;
+  /* tokens.slint — semantic */
+  --alert: #ff453a;
+  --ok: #30d158;
+  --caution: #ff9f0a;
+  --control: #0a84ff;
+
+  position: relative;
+  width: 100%;
+  aspect-ratio: 800 / 480;
+  container-type: inline-size;
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: calc(100cqw / 800 * 16);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0;
+  color: var(--t1);
+  box-shadow: 0 40px 90px -30px #000, 0 0 0 1px #ffffff14;   /* taste-skill-ignore — data-ui chrome */
+}
+
+/* Reset, kept at the specificity of .screen alone with :where() so every
+   class below still wins on source order. */
+.screen :where(*) { box-sizing: border-box; }
+.screen :where(p) { margin: 0; }
+.screen :where(button) {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Tokens.bg_tide */
+.ground {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #0c1328 0%, #080a14 50%, #0a2033 100%);
+}
+
+/* ── glass ─────────────────────────────────────────────────
+   Surface, Menu and Pill from glass.slint. The hairline is an inset ring so
+   the two pseudo-elements are free for the rims. */
+
+.surface,
+.menu,
+.pill {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, var(--tint, transparent) 0%, transparent 64%),
+    linear-gradient(180deg, var(--glass-top) 0%, var(--glass-bottom) 100%),
+    var(--panel);
+  border: 1px solid var(--glass-border);
+}
+
+/* lit top rim, inset by radius/2, 1px below the edge */
+.surface::before,
+.menu::before,
+.pill::before {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: var(--rim-inset, 0px);
+  right: var(--rim-inset, 0px);
+  height: 1px;   /* taste-skill-ignore — data-ui chrome */
+  background: var(--rim-top);
+  pointer-events: none;
+}
+
+/* dim bottom rim — Surface only; Menu and Pill set hairline/bottom false */
+.surface::after {
+  content: "";
+  position: absolute;
+  bottom: 1px;
+  left: var(--rim-inset, 0px);
+  right: var(--rim-inset, 0px);
+  height: 1px;   /* taste-skill-ignore — data-ui chrome */
+  background: var(--rim-bottom);
+  pointer-events: none;
+}
+
+.surface {
+  --rim-inset: calc(100cqw * 14 / 800);   /* r_panel / 2 */
+  border-radius: calc(100cqw * 28 / 800);
+  box-shadow: inset 0 0 0 1px var(--rim-hairline), 0 8px 24px #00000059;   /* taste-skill-ignore — data-ui chrome */
+}
+
+.menu {
+  --rim-inset: calc(100cqw * 10 / 800);
+  border-radius: calc(100cqw * 20 / 800);   /* r_dock */
+  box-shadow: 0 8px 24px #00000059;   /* taste-skill-ignore — data-ui chrome */
+}
+
+.group {
+  --rim-inset: calc(100cqw * 12 / 800);   /* r_group / 2 */
+  border-radius: calc(100cqw * 24 / 800);
+}
+
+/* ── dock ──────────────────────────────────────────────────
+   68 wide, 4 items, height = 4 * (48 + 7) + 146 = 366, centred in 480. */
+
+.dock {
+  position: absolute;
+  left: calc(100cqw * 14 / 800);
+  top: calc(100cqw * 57 / 800);
+  width: calc(100cqw * 68 / 800);
+  height: calc(100cqw * 366 / 800);
+  padding-top: calc(100cqw * 12 / 800);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(100cqw * 7 / 800);
+}
+
+.slotBtn {
+  position: relative;
+  flex: none;
+  width: calc(100cqw * 48 / 800);
+  height: calc(100cqw * 48 / 800);
+  border-radius: calc(100cqw * 14 / 800);   /* r_nested — a squircle, not a circle */
+  background: #ffffff1a;
+  border: 1px solid #ffffff1a;
+  color: var(--t2);
+  display: grid;
+  place-items: center;
+  transition: background 160ms var(--ease), color 160ms var(--ease), box-shadow 160ms var(--ease);
+}
+.slotBtn:hover { background: #ffffff1f; color: var(--t1); }
+.slotBtn svg { width: calc(100cqw * 21 / 800); height: calc(100cqw * 21 / 800); }
+
+.slotOn {
+  background: var(--control);
+  border-color: transparent;
+  color: var(--t1);
+  box-shadow: 0 3px 12px #0a84ff66;   /* taste-skill-ignore — data-ui chrome */
+}
+
+/* a plugin that ships icon.png gets a 38px tile instead of a glyph */
+.slotArt {
+  width: calc(100cqw * 38 / 800);
+  height: calc(100cqw * 38 / 800);
+  border-radius: calc(100cqw * 10 / 800);
+  border: 1px solid #ffffff1f;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  opacity: 0.66;
+  background: linear-gradient(145deg, #1ed760 0%, #0f8c3e 100%);
+  color: #06120a;
+}
+.slotOn .slotArt { opacity: 1; }
+.slotArt svg { width: calc(100cqw * 22 / 800); height: calc(100cqw * 22 / 800); }
+
+.dockRule {
+  flex: none;
+  width: calc(100cqw * 26 / 800);
+  height: 1px;   /* taste-skill-ignore — data-ui chrome */
+  background: #ffffff1f;
+  margin-top: calc(100cqw * 4 / 800);
+}
+.dockApps { margin-top: calc(100cqw * 5 / 800); }
+.dockGear { margin-top: calc(100cqw * 1 / 800); }
+
+/* Tokens.dock_right: the rail keeps its width on whichever side it sits and
+   the content column takes what is left, so only the x origins move. */
+.screen[data-dock="right"] .dock {
+  left: auto;
+  right: calc(100cqw * 14 / 800);
+}
+.screen[data-dock="right"] .status {
+  left: calc(100cqw * 14 / 800);
+  right: calc(100cqw * 96 / 800);
+}
+.screen[data-dock="right"] .content { left: calc(100cqw * 14 / 800); }
+
+/* ── status bar ────────────────────────────────────────────
+   content_x 96, edge 14, content_w 690, status_h 30. */
+
+.status {
+  position: absolute;
+  left: calc(100cqw * 96 / 800);
+  top: calc(100cqw * 14 / 800);
+  right: calc(100cqw * 14 / 800);
+  height: calc(100cqw * 30 / 800);
+  display: flex;
+  align-items: center;
+  gap: calc(100cqw * 10 / 800);
+}
+
+.back {
+  flex: none;
+  width: calc(100cqw * 30 / 800);
+  height: calc(100cqw * 30 / 800);
+  border-radius: calc(100cqw * 10 / 800);
+  background: #ffffff1a;
+  border: 1px solid #ffffff1a;
+  color: var(--control);
+  display: grid;
+  place-items: center;
+}
+.back svg { width: calc(100cqw * 16 / 800); height: calc(100cqw * 16 / 800); }
+
+.lead {
+  font-size: calc(100cqw * 15 / 800);
+  font-weight: 600;
+  color: var(--t1);
+  white-space: nowrap;
+}
+/* with a back button the lead is the page title, at headline/700 */
+.leadBack {
+  font-size: calc(100cqw * 17 / 800);
+  font-weight: 700;
+  margin-left: calc(100cqw * 10 / 800);
+}
+
+.pill {
+  margin-left: auto;
+  flex: none;
+  height: calc(100cqw * 28 / 800);
+  padding-inline: calc(100cqw * 13 / 800);
+  display: inline-flex;
+  align-items: center;
+  gap: calc(100cqw * 8 / 800);
+  border-radius: 999px;
+  --panel: var(--chip-fill);
+  --rim-inset: calc(100cqw * 7 / 800);
+}
+.dot {
+  width: calc(100cqw * 6 / 800);
+  height: calc(100cqw * 6 / 800);
+  border-radius: 50%;
+  background: var(--ok);   /* Tokens.ok — the link to the host is up */
+}
+.clock {
+  font-size: calc(100cqw * 13 / 800);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  min-width: calc(100cqw * 32 / 800);
+}
+
+/* ── content column ───────────────────────────────────────
+   Every page occupies the same rectangle: content_x, slot_y, content_w,
+   slot_h. */
+
+.content {
+  position: absolute;
+  left: calc(100cqw * 96 / 800);
+  top: calc(100cqw * 58 / 800);
+  width: calc(100cqw * 690 / 800);
+  height: calc(100cqw * 408 / 800);
+}
+
+/* ── widget grid ───────────────────────────────────────── */
+
+.grid {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: calc(100cqw * 14 / 800);
+}
+
+.cell {
+  padding: calc(100cqw * 20 / 800);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.focused {
+  --panel: var(--selected);
+  border-color: var(--selected-edge);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: calc(100cqw * 10 / 800);
+  min-width: 0;
+}
+.title {
+  font-size: calc(100cqw * 13 / 800);
+  font-weight: 600;
+  color: var(--t3);
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.meta {
+  flex: none;
+  font-size: calc(100cqw * 12 / 800);
+  font-weight: 500;
+  color: var(--t3);
+}
+
+.stale {
+  flex: none;
+  width: calc(100cqw * 52 / 800);
+  height: calc(100cqw * 20 / 800);
+  border-radius: calc(100cqw * 7 / 800);
+  background: #ff9f0a2e;
+  color: var(--caution);
+  font-size: calc(100cqw * 11 / 800);
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+}
+
+/* the body sits at the bottom of the pane — slot.slint stretches the gap */
+.body { margin-top: auto; min-width: 0; }
+
+.valueRow {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(100cqw * 4 / 800);
+}
+.value {
+  font-size: calc(100cqw * 48 / 800);
+  font-weight: 700;
+  letter-spacing: calc(100cqw * -2 / 800);
+  line-height: 1;
+  color: var(--t1);
+}
+.unit {
+  font-size: calc(100cqw * 19 / 800);
+  font-weight: 600;
+  color: var(--t2);
+  padding-top: calc(100cqw * 6.72 / 800);   /* value_size * 0.14 */
+  line-height: 1;
+}
+.dim .value { color: var(--t3); }
+.dim .headline { color: var(--t2); }
+
+.headline {
+  font-size: calc(100cqw * 21 / 800);
+  font-weight: 700;
+  letter-spacing: calc(100cqw * -0.4 / 800);
+  line-height: 1.12;
+  color: var(--t1);
+}
+.detail {
+  font-size: calc(100cqw * 13 / 800);
+  font-weight: 500;
+  color: var(--t2);
+  line-height: 1.25;
+}
+.sep { color: var(--t3); }
+
+/* a slot narrower than 200px drops the value and runs 17 / 13 */
+.compact .headline {
+  font-size: calc(100cqw * 17 / 800);
+  letter-spacing: calc(100cqw * -0.3 / 800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.compact .detail {
+  color: var(--t3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.compact .body > * + * { margin-top: calc(100cqw * 3 / 800); }
+
+/* ── spotify: the 2x1 nowplaying tile ─────────────────────
+   plugins/spotify/src/widgets/nowplaying.slint — padding 20, spacing 16,
+   78px art at radius 18, and a 4px progress hairline. */
+
+.np {
+  padding: calc(100cqw * 20 / 800);
+  display: flex;
+  align-items: center;
+  gap: calc(100cqw * 16 / 800);
+  min-width: 0;
+}
+.npArt {
+  flex: none;
+  width: calc(100cqw * 78 / 800);
+  height: calc(100cqw * 78 / 800);
+  border-radius: calc(100cqw * 18 / 800);
+  background: linear-gradient(145deg, #4da3ff 0%, #0a5fcc 100%);
+  display: grid;
+  place-items: center;
+  color: #ffffffeb;
+}
+.npArt svg { width: calc(100cqw * 28 / 800); height: calc(100cqw * 28 / 800); }
+
+.npText { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; gap: calc(100cqw * 3 / 800); }
+.kicker { font-size: calc(100cqw * 11 / 800); font-weight: 600; color: var(--t3); }
+.npTitle {
+  font-size: calc(100cqw * 21 / 800);
+  font-weight: 700;
+  letter-spacing: calc(100cqw * -0.5 / 800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.npSub {
+  font-size: calc(100cqw * 14 / 800);
+  font-weight: 500;
+  color: #ffffffb8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.track {
+  height: calc(100cqw * 4 / 800);
+  border-radius: 999px;
+  background: #ffffff2e;
+  overflow: hidden;
+}
+.fill { height: 100%; border-radius: 999px; background: #fff; }
+
+/* ── spotify: the plugin's own page ───────────────────────
+   plugins/spotify/src/app.slint — 28 padding and gap, 190px art at radius 26,
+   a 36px headline, a 6px progress bar, and 56/68px controls. */
+
+.page {
+  width: 100%;
+  height: 100%;
+  border-radius: calc(100cqw * 30 / 800);
+  border: 1px solid var(--glass-border);
+  background: #ffffff0f;
+  padding: calc(100cqw * 28 / 800);
+  display: flex;
+  align-items: center;
+  gap: calc(100cqw * 28 / 800);
+  min-width: 0;
+}
+.pgArt {
+  flex: none;
+  width: calc(100cqw * 190 / 800);
+  height: calc(100cqw * 190 / 800);
+  border-radius: calc(100cqw * 26 / 800);
+  background: linear-gradient(145deg, #4da3ff 0%, #0a5fcc 55%, #073e88 100%);
+  box-shadow: 0 14px 34px #00000061;   /* taste-skill-ignore — data-ui chrome */
+  display: grid;
+  place-items: center;
+  color: #ffffffeb;
+}
+.pgArt svg { width: calc(100cqw * 64 / 800); height: calc(100cqw * 64 / 800); }
+
+.pgCol { flex: 1 1 auto; min-width: 0; }
+.pgTitle {
+  font-size: calc(100cqw * 36 / 800);
+  font-weight: 700;
+  letter-spacing: calc(100cqw * -1.3 / 800);
+  line-height: 1.08;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pgKicker { font-size: calc(100cqw * 13 / 800); font-weight: 600; color: #ffffffad; }
+.pgSub { font-size: calc(100cqw * 16 / 800); font-weight: 500; color: #ffffffb8; }
+
+.pgTrack {
+  margin-top: calc(100cqw * 20 / 800);
+  height: calc(100cqw * 6 / 800);
+  border-radius: 999px;
+  background: #ffffff2e;
+  overflow: hidden;
+}
+.pgTimes {
+  margin-top: calc(100cqw * 7 / 800);
+  display: flex;
+  justify-content: space-between;
+  font-size: calc(100cqw * 12 / 800);
+  font-weight: 600;
+  color: #ffffffa3;
+  font-variant-numeric: tabular-nums;
+}
+.pgControls {
+  margin-top: calc(100cqw * 20 / 800);
+  display: flex;
+  align-items: center;
+  gap: calc(100cqw * 14 / 800);
+}
+.ctl {
+  width: calc(100cqw * 56 / 800);
+  height: calc(100cqw * 56 / 800);
+  border-radius: calc(100cqw * 19 / 800);
+  background: #ffffff1c;
+  border: 1px solid #ffffff1f;
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+.ctl svg { width: calc(100cqw * 22 / 800); height: calc(100cqw * 22 / 800); }
+.ctlPrimary {
+  width: calc(100cqw * 68 / 800);
+  height: calc(100cqw * 68 / 800);
+  border-radius: calc(100cqw * 23 / 800);
+  background: var(--control);
+  border: none;
+  box-shadow: 0 8px 22px #0a84ff70;   /* taste-skill-ignore — data-ui chrome */
+}
+.ctlPrimary svg { width: calc(100cqw * 26 / 800); height: calc(100cqw * 26 / 800); }
+
+/* ── a plugin with no page of its own ─────────────────────
+   beacon and echo are host-side fixtures: their app.slint draws the name at
+   24px and nothing else. The shell still gives them a page. */
+
+.stub {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: calc(100cqw * 24 / 800);
+  font-weight: 500;
+  color: var(--t1);
+}
+
+/* ── switcher ─────────────────────────────────────────────
+   switcher.slint — a 4-wide grid of 100px squircles at radius 26 over
+   slot_h - 30, with a 13px gap to a 14px label. */
+
+.switcher {
+  width: 100%;
+  height: calc(100cqw * 378 / 800);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: calc(100cqw * 182 / 800);
+  gap: calc(100cqw * 14 / 800);
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(100cqw * 13 / 800);
+  color: #fff;
+  min-width: 0;
+}
+.tileArt {
+  width: calc(100cqw * 100 / 800);
+  height: calc(100cqw * 100 / 800);
+  border-radius: calc(100cqw * 26 / 800);
+  border: 1px solid #ffffff1f;
+  display: grid;
+  place-items: center;
+  transition: transform 160ms var(--ease);
+}
+.tile:hover .tileArt { transform: translateY(calc(100cqw * -2 / 800)); }
+.tileArt svg { width: calc(100cqw * 46 / 800); height: calc(100cqw * 46 / 800); }
+.tileLabel {
+  font-size: calc(100cqw * 14 / 800);
+  font-weight: 500;
+  color: #ffffffe6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.tileBadge {
+  position: absolute;
+  top: calc(100cqw * -6 / 800);
+  right: calc(100cqw * -6 / 800);
+  width: calc(100cqw * 22 / 800);
+  height: calc(100cqw * 22 / 800);
+  border-radius: 50%;
+  background: var(--alert);
+  border: calc(100cqw * 3 / 800) solid #06070b;
+  font-size: calc(100cqw * 12 / 800);
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+.tileWrap { position: relative; }
+
+/* ── settings ─────────────────────────────────────────────
+   settings.slint — two r_group panes, the right one 286 wide, 20 padding,
+   56px rows, a 1px separator, and the controls from controls.slint. */
+
+.settings {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  gap: calc(100cqw * 14 / 800);
+  min-width: 0;
+}
+.groupWide { flex: 1 1 auto; min-width: 0; }
+.groupSide { flex: none; width: calc(100cqw * 286 / 800); }
+.group {
+  padding: calc(100cqw * 20 / 800);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.groupHead { font-size: calc(100cqw * 13 / 800); font-weight: 600; color: var(--t3); }
+
+.row {
+  height: calc(100cqw * 56 / 800);
+  display: flex;
+  align-items: center;
+  gap: calc(100cqw * 14 / 800);
+  min-width: 0;
+}
+.rowTall { height: calc(100cqw * 64 / 800); }
+.rowText { flex: 1 1 auto; min-width: 0; }
+/* controls.slint elides the row label rather than wrapping it */
+.rowLabel {
+  font-size: calc(100cqw * 15 / 800);
+  font-weight: 500;
+  color: var(--t1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* the device line the host hands the settings page */
+.deviceLine {
+  font-size: calc(100cqw * 12 / 800);
+  font-weight: 500;
+  color: var(--t3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hr { height: 1px; background: var(--separator); }   /* taste-skill-ignore — data-ui chrome */
+.pad14 { height: calc(100cqw * 14 / 800); }
+.pad10 { height: calc(100cqw * 10 / 800); }
+
+.seg {
+  flex: none;
+  width: calc(100cqw * 152 / 800);
+  height: calc(100cqw * 38 / 800);
+  border-radius: calc(100cqw * 14 / 800);
+  background: #ffffff1f;
+  border: 1px solid #ffffff1a;
+  padding: calc(100cqw * 3 / 800);
+  display: flex;
+  gap: calc(100cqw * 3 / 800);
+}
+.segBtn {
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: center;
+  border-radius: calc(100cqw * 11 / 800);   /* r_nested - 3 */
+  background: none;
+  border: none;
+  font-size: calc(100cqw * 14 / 800);
+  font-weight: 600;
+  color: var(--t2);
+}
+.segOn { background: #ffffffeb; color: #10131a; }
+
+.swatches { flex: none; display: flex; gap: calc(100cqw * 9 / 800); }
+.swatch {
+  width: calc(100cqw * 46 / 800);
+  height: calc(100cqw * 34 / 800);
+  border-radius: calc(100cqw * 11 / 800);
+  border: 1px solid #ffffff24;
+}
+.swatchOn { border: calc(100cqw * 2 / 800) solid var(--control); }
+
+.plugRow {
+  height: calc(100cqw * 56 / 800);
+  display: flex;
+  align-items: center;
+  gap: calc(100cqw * 12 / 800);
+  min-width: 0;
+}
+.plugArt {
+  flex: none;
+  width: calc(100cqw * 34 / 800);
+  height: calc(100cqw * 34 / 800);
+  border-radius: calc(100cqw * 10 / 800);
+  background: #ffffff1a;
+  border: 1px solid #ffffff1a;
+  color: var(--t2);
+  display: grid;
+  place-items: center;
+}
+.plugArt svg { width: calc(100cqw * 17 / 800); height: calc(100cqw * 17 / 800); }
+.plugText { flex: 1 1 auto; min-width: 0; }
+.plugName {
+  display: block;
+  font-size: calc(100cqw * 15 / 800);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.plugStatus {
+  display: block;
+  font-size: calc(100cqw * 12 / 800);
+  font-weight: 500;
+  color: var(--t3);
+  margin-top: calc(100cqw * 1 / 800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.plugWarn { color: var(--caution); }
+.connect {
+  flex: none;
+  width: calc(100cqw * 84 / 800);
+  height: calc(100cqw * 34 / 800);
+  border-radius: calc(100cqw * 11 / 800);
+  background: var(--control);
+  border: none;
+  color: var(--t1);
+  font-size: calc(100cqw * 13 / 800);
+  font-weight: 600;
+}
+.grow { flex: 1 1 auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tilt { transform: none !important; transition: none; }
+  .tileArt { transition: none; }
+}
+
+/* An empty slot. Dashed rather than solid, and dimmer than a loaded
+   one, because the shell distinguishes "nothing here" from "something
+   here that is quiet". */
+.empty {
+  background: transparent;
+  border: 1px dashed #ffffff21;
+  justify-content: center;
+}
+.empty .headline { color: #ffffffa3; }
+.empty .detail { color: #ffffff5c; }

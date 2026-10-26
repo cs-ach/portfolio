@@ -1,0 +1,290 @@
+/* The vault figure, on its own stylesheet. A real interface fragment: inside
+   data-ui the product's borders, radii and panels are its own conventions,
+   not the page's. Layout is driven by the figure's own width with container
+   queries, because the card it sits in is anywhere from ~260px to ~900px.
+   taste-skill-ignore */
+
+.fig {
+  container-type: inline-size;
+  background: var(--surface);
+  border: 1px solid #ffffff1f;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 0.9375rem;
+  color: var(--ink);
+}
+
+/* ── chrome ────────────────────────────────────────────── */
+
+.bar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1rem;
+  background: #ffffff0a;
+}
+.name { font-weight: 600; font-size: 0.9375rem; }
+.meta { font-size: 0.8125rem; color: var(--muted); }
+
+.block {
+  padding: 1.125rem 1rem 1.25rem;
+  border-top: 1px solid #ffffff14;
+  display: grid;
+  gap: 0.75rem;
+  justify-items: stretch;
+}
+.block:first-of-type { border-top: 0; }
+
+.h {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+.lede { font-size: 0.875rem; color: var(--muted); line-height: 1.55; }
+.aside { font-size: 0.8125rem; color: var(--muted); line-height: 1.5; }
+
+/* ── the passphrase field ──────────────────────────────── */
+
+.field { display: grid; gap: 0.35rem; }
+.label { font-size: 0.8125rem; color: var(--muted); }
+.input {
+  min-height: 44px;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: #ffffff0f;
+  border: 1px solid #ffffff29;
+  border-radius: 8px;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9375rem;
+}
+.input::placeholder { color: #ffffff52; }
+.input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: #0a84ff99;
+}
+
+/* ── two-column splits, stacked when narrow ────────────── */
+
+.split { display: grid; gap: 0.75rem; }
+@container (min-width: 32rem) {
+  .split { grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+}
+
+.col { display: grid; gap: 0.5rem; align-content: start; }
+.colHead {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── the derivation chain ──────────────────────────────── */
+
+.stages { list-style: none; display: grid; gap: 0.4rem; margin: 0; padding: 0; }
+
+.stage, .stageOn {
+  display: grid;
+  gap: 1px;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  min-width: 0;
+}
+.stage {
+  background: #ffffff08;
+  border: 1px dashed #ffffff1f;
+  color: var(--muted);
+}
+.stageOn {
+  background: #0a84ff1f;
+  border: 1px solid #0a84ff52;
+  color: var(--ink);
+}
+.stageName { font-size: 0.875rem; font-weight: 600; }
+.stageOn .stageName { color: var(--accent-text); }
+.stageNote { font-size: 0.75rem; color: var(--muted); }
+.mask {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: #ffffff5c;
+  overflow: hidden;
+}
+
+.empty {
+  display: grid;
+  place-items: center;
+  min-height: 5rem;
+  padding: 0.9rem;
+  border: 1px dashed #ffffff29;
+  border-radius: 8px;
+  background: transparent;
+}
+.emptyLine { font-size: 0.8125rem; color: var(--muted); text-align: center; line-height: 1.5; }
+
+/* ── the trust score ───────────────────────────────────── */
+
+.score { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+.scoreNum {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.scoreOf { font-size: 0.875rem; color: var(--muted); }
+
+.track {
+  height: 6px;
+  border-radius: 999px;
+  background: #ffffff14;
+  overflow: hidden;
+}
+.fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width var(--d-fast) var(--ease);
+}
+
+.row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+/* ── buttons ───────────────────────────────────────────── */
+
+.btn, .btnGhost, .attempt {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: background var(--d-fast) var(--ease), border-color var(--d-fast) var(--ease);
+}
+.btn { background: var(--accent-strong); border: 1px solid #0a84ff52; color: #fff; }
+.btn:hover:not(:disabled) { background: var(--accent); }
+.btnGhost, .attempt {
+  background: #ffffff14;
+  border: 1px solid #ffffff29;
+  color: var(--ink);
+}
+.btnGhost:hover:not(:disabled), .attempt:hover:not(:disabled) { background: #ffffff24; }
+.btnGhost { justify-self: start; }
+
+.btn:disabled, .btnGhost:disabled, .attempt:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn:focus-visible, .btnGhost:focus-visible, .attempt:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── the action list ───────────────────────────────────── */
+
+.actions { list-style: none; display: grid; gap: 0.5rem; margin: 0; padding: 0; }
+
+.action {
+  display: grid;
+  gap: 0.3rem 0.75rem;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid #ffffff14;
+  border-radius: 10px;
+  background: #ffffff08;
+  min-width: 0;
+}
+@container (min-width: 26rem) {
+  .action { grid-template-columns: minmax(9rem, 14rem) 1fr auto; }
+}
+
+.attempt { justify-self: stretch; }
+.need { font-size: 0.8125rem; color: var(--muted); min-width: 0; }
+.risk { color: #ffffff5c; }
+
+.chipOk, .chipWarn, .chipStop {
+  justify-self: start;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.chipOk   { background: #30d1582e; color: #7ee89b; }
+.chipWarn { background: #ff9f0a2e; color: #ffce7a; }
+.chipStop { background: #ff453a2e; color: #ff9c94; }
+
+/* ── outcomes, announced politely ──────────────────────── */
+
+.live { display: grid; gap: 0.4rem; }
+.outcomes { list-style: none; display: grid; gap: 0.4rem; margin: 0; padding: 0; }
+
+.outAllowed, .outRefused, .outNote {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ffffff14;
+}
+.outAllowed { background: #30d15817; border-color: #30d15840; color: var(--ink); }
+.outRefused { background: #ff9f0a17; border-color: #ff9f0a40; color: var(--ink); }
+.outNote    { background: #ffffff0a; color: var(--muted); }
+.outAllowed[data-old], .outRefused[data-old], .outNote[data-old] { opacity: 0.55; }
+
+.verdictTag {
+  display: inline-block;
+  margin-right: 0.4rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.outAllowed .verdictTag { color: #7ee89b; }
+.outRefused .verdictTag { color: #ffce7a; }
+.outNote .verdictTag { color: var(--accent-text); }
+
+.outcomeIdle { font-size: 0.8125rem; color: var(--muted); }
+
+/* ── the server's inventory ────────────────────────────── */
+
+.holds { list-style: none; display: grid; gap: 0.3rem; margin: 0; padding: 0; }
+
+.has, .hasNone {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  min-width: 0;
+}
+.has { background: #ffffff0f; border: 1px solid #ffffff1f; }
+.hasNone { background: transparent; border: 1px dashed #ffffff24; color: var(--muted); }
+
+.hasK { min-width: 0; }
+.hasV { font-variant-numeric: tabular-nums; color: var(--muted); }
+.has .hasV { color: var(--accent-text); font-weight: 600; }
+
+.wire { list-style: none; display: grid; gap: 0.3rem; margin: 0; padding: 0; }
+.wireLine {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  background: #ffffff08;
+  border: 1px solid #ffffff14;
+  font-size: 0.75rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+/* ── reduced motion ────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .fill, .btn, .btnGhost, .attempt { transition: none; }
+}

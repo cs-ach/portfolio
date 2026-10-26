@@ -1,0 +1,661 @@
+/* The project hero, as an exhibit.
+
+   One tone per project, lit from above: a soft pool of light behind the
+   object that falls off to the darker tone at the edges. No floor and no
+   shadow — the exhibit is lit, not grounded, and the object floats. The
+   card (label, title, spec) stands to its left in the page's column.
+
+   The hand-over between a list hero and a page hero is a move between
+   two compositions of the same parts. The list is the exhibit at rest:
+   the card on the left at a fixed distance from the top, the device
+   centred in its column. The page is the same exhibit staged for its own
+   opening: the device stands in the middle of the window, as tall as the
+   room under the bar allows, and the card is taken apart around it — the
+   title crosses to its left, the lead line to its right, the breadcrumb
+   and the exhibit number line the top, the spec table runs along the
+   foot and the scroll cue sits under it. Nothing is centred against
+   content that differs between modes, so each part has one definite
+   place in each composition and the transition only has to travel
+   between them (see the page-mode section below).
+
+   In a list the hero is taller than the window and its inner stage is
+   pinned, so the device's turn plays while the page holds still. */
+
+.hero {
+  /* The side gutter lines up with .wrap on wide screens. Percentages here
+     resolve against the hero, where the property is used. */
+  --gutter: max(var(--margin), calc((100% - var(--wrap)) / 2));
+  /* Raised from 640/1100: the exhibit now has to hold a whole device with
+     air around it, and the old floor left a short window with nothing but
+     bands of card. */
+  --h: clamp(680px, 100svh, 1180px);
+  --hairline: color-mix(in srgb, var(--ink) 16%, transparent);
+
+  position: relative;
+  isolation: isolate;
+  display: block;
+  color: var(--ink);
+  background: var(--stage-alt);
+}
+
+/* The pin is a long section with a sticky stage inside it. Only on wide
+   screens, and only when motion is welcome: anywhere else there is no
+   turn to hold the page for. */
+@media (min-width: 960px) and (prefers-reduced-motion: no-preference) {
+  .hero:not([data-mode="page"]) { height: calc(var(--h) + 80svh); }
+  .hero:not([data-mode="page"]) .pin { position: sticky; top: 0; }
+}
+
+/* The pin used to clip on both axes. It had to: the page hero pushed the
+   device off the right edge on purpose, and app/globals.css (see the note
+   on the root's overflow) contains the site's horizontal overflow here
+   rather than on the root, because `overflow: clip` on the root freezes
+   the page in Chrome. Nothing bleeds any more — the device is centred —
+   so the vertical clip was doing one thing only: slicing the bottom off
+   a device that did not fit. It is gone, and the horizontal containment
+   stays as a single-axis clip, which is the one value that pairs with
+   `visible` on the other axis. The device is sized to fit (see --art
+   under the page's composition); this is now a guard, not a frame. */
+.pin {
+  position: relative;
+  height: var(--h);
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+/* ── the stage ──────────────────────────────────────────────
+   The light sits above and a little behind the object, over the device
+   column, so the brightest part of the stage is where the eye should go. */
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(
+      ellipse 55% 70% at 66% 28%,
+      color-mix(in srgb, var(--stage) 55%, #fff) 0%,
+      var(--stage) 45%,
+      var(--stage-alt) 100%
+    ),
+    var(--stage-alt);
+}
+
+/* ── the grid ───────────────────────────────────────────── */
+.grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(1rem, 2vw, 2rem);
+  height: 100%;
+  padding-inline: var(--gutter);
+}
+
+.text {
+  grid-column: 1 / span 5;
+  align-self: start;
+  /* The column is a size container so the title can be capped by its
+     width: a long single word ("Architecture") must never run past the
+     column into the device. The column is the same width in every mode,
+     so the cap is too. */
+  container-type: inline-size;
+  padding-top: max(calc(var(--nav-h) + 2rem), 17svh);
+}
+
+.plinth {
+  grid-column: 6 / span 7;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+
+/* ── the card ───────────────────────────────────────────── */
+
+/* The one line that differs between modes. Its height is fixed, empty in
+   a list, so the label and title start at the same place everywhere. */
+.above {
+  display: flex;
+  align-items: center;
+  height: 1.5rem;
+  margin-bottom: var(--s-4);
+}
+
+.label { margin: 0 0 var(--s-3); }
+
+.title {
+  margin: 0;
+  font-size: min(clamp(2.75rem, 1.6rem + 4.6vw, 6.75rem), 15.5cqi);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  color: var(--ink);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.refusal {
+  max-width: 34ch;
+  margin: var(--s-5) 0 0;
+  font-size: var(--t-lead);
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.spec {
+  display: grid;
+  max-width: 26rem;
+  margin: var(--s-6) 0 0;
+  border-top: 1px solid var(--hairline);
+}
+.row {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: var(--s-4);
+  padding-block: 0.6rem;
+  border-bottom: 1px solid var(--hairline);
+  font-size: var(--t-small);
+  line-height: 1.4;
+}
+.row dt { color: var(--faint); }
+.row dd { margin: 0; color: var(--ink); }
+
+.kicker {
+  margin: 0;
+  font-size: var(--t-small);
+  font-weight: 500;
+  color: var(--accent);
+}
+
+/* The pill: a picture of the affordance. The whole hero is the link, so
+   the pill never gets hovered or pressed itself and globals' .act /
+   .act-nudge — which answer to their own :hover — would simply never
+   fire. The hero answers on its behalf here, to the same contract
+   (design/08-INTERACTION.md): on hover the pill warms and its arrow
+   travels --nudge in the direction the action goes; on press the arrow
+   travels twice as far and the whole exhibit gives a little.
+   Transform, opacity and colour only. */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  margin-top: var(--s-6);
+  padding: 0.7rem 1.15rem 0.7rem 1.3rem;
+  border-radius: var(--r-pill);
+  background: var(--ink);
+  color: var(--stage);
+  font-size: var(--t-small);
+  font-weight: 500;
+  transition:
+    background-color var(--d-fast) var(--ease),
+    color var(--d-fast) var(--ease);
+}
+.cta svg {
+  width: 15px;
+  height: 15px;
+  transition: translate var(--d-fast) var(--ease);
+}
+
+/* Colour answers everywhere, including under reduced motion. Hover is
+   behind (hover: hover) so a touch device is not left holding it. */
+@media (hover: hover) {
+  .hero:hover .cta { background: var(--accent); color: #fff; }
+}
+.hero:focus-visible .cta { background: var(--accent); color: #fff; }
+
+/* The two motions. --press is rebound rather than hard-coded, per the
+   contract: 3% off something the size of the window does not read as a
+   button going down, it reads as the page falling over, so the exhibit
+   gives by a fraction of a percent while the arrow carries the full
+   doubled nudge. Focus-visible gets the travel as well, because the
+   arrow is the only part of the pill that states direction. */
+.hero .pin { --press: 0.994; }
+
+@media (prefers-reduced-motion: no-preference) {
+  @media (hover: hover) {
+    .hero:hover .cta [data-arrow] { translate: var(--nudge, 3px) 0; }
+  }
+  .hero:focus-visible .cta [data-arrow] { translate: var(--nudge, 3px) 0; }
+
+  .hero:active .cta [data-arrow] {
+    translate: calc(var(--nudge, 3px) * 2) 0;
+    transition-duration: var(--d-press, 90ms);
+    transition-timing-function: var(--ease-press, cubic-bezier(0.3, 0, 0.2, 1));
+  }
+  .hero .pin { transition: scale var(--d-base) var(--ease); }
+  .hero:active .pin {
+    scale: var(--press);
+    transition-duration: var(--d-press, 90ms);
+    transition-timing-function: var(--ease-press, cubic-bezier(0.3, 0, 0.2, 1));
+  }
+}
+
+/* The hero is one large link. Its focus ring is drawn inside the pinned
+   stage's bounds, because outside it would be clipped by its neighbour. */
+.hero:focus-visible { outline: none; }
+.hero:focus-visible .pin { outline: 2px solid var(--accent); outline-offset: -6px; }
+
+/* ── page mode ──────────────────────────────────────────── */
+.crumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  font-size: var(--t-small);
+  color: var(--muted);
+}
+.crumb a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--hairline);
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--d-fast) var(--ease);
+}
+.crumb a:hover { text-decoration-color: currentColor; }
+
+.cue {
+  position: absolute;
+  left: var(--gutter);
+  bottom: clamp(1.25rem, 3vw, 2.25rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  margin: 0;
+  font-size: var(--t-small);
+  color: var(--muted);
+}
+.cue svg { width: 15px; height: 15px; }
+
+/* ── the page's own composition ─────────────────────────────
+   The list hero and the page hero used to be laid out identically, which
+   made the hand-over a fade between two copies of one picture. Then the
+   page pushed the device off the right edge, which made the centrepiece
+   a thing with its corner cut off. Now the object simply stands in the
+   middle of the window and the card is taken apart around it:
+
+     device  dead centre of the window, as large as the room under the bar
+             and between the captions allows (larger than the list's, which
+             is the point of the move), with air around it; nothing bleeds,
+             nothing is cut
+     title   crosses to the LEFT of the device, set against it
+     refusal crosses to the RIGHT of the device, so the two read as a
+             pair of captions either side of the object
+     crumb   top left, under the bar, level with the exhibit number at
+             the top right
+     spec    a strip along the foot, label over value
+     cue     under the strip, centred, where the eye leaves the picture
+
+   The parts are the same elements in the same order in the DOM; only
+   their places change, which is exactly what the transition travels.
+   .text stops being a box here (display: contents) so its children can
+   be placed around the device as grid items of the hero's own grid
+   without the markup differing between modes. The one thing that costs
+   is the title's container-relative width cap (15.5cqi), which has no
+   container to resolve against once the box is gone — so page mode caps
+   the title in viewport units instead.
+
+   Wide screens only. Stacked, the order already is the composition. */
+@media (min-width: 960px) {
+  /* The light comes down the middle now, over the object. */
+  .hero[data-mode="page"] .stage {
+    background:
+      radial-gradient(
+        ellipse 58% 78% at 50% 46%,
+        color-mix(in srgb, var(--stage) 55%, #fff) 0%,
+        var(--stage) 48%,
+        var(--stage-alt) 100%
+      ),
+      var(--stage-alt);
+  }
+
+  /* Four rows: crumb and number, the flanking band, the spec strip, the
+     cue. Three columns: an equal 1fr either side of the device's own
+     track, so the middle — the device — is centred on the window whatever
+     it measures, and the captions share what is left. The middle track is
+     `auto` on purpose and that is only safe because everything that sizes
+     it is free of percentages (see --span and the .fig widths below): an
+     `auto` track is sized from its item's max-content width, and a width
+     that contains a percentage of the item's own track is circular, so it
+     resolves to zero during that sizing pass and the track collapses to 0
+     while the device still lays out at its real width, overflowing on both
+     sides into the captions' columns. The track and the slot therefore
+     agree by construction: the track is the slot's width, term for term.
+
+     The stage is wider than the site's column on a large window (see
+     --stage-w below), so the grid's side padding is the stage's gutter, not
+     the page's. The three full-width parts that read as the page's own
+     column — crumb, number and spec strip — are pulled back in by the
+     difference (--trim, zero until the window is wider than the page's
+     column), so their left edge still lines up with the bar and the
+     chapters under the hero while the device is given the extra room.
+
+     Every fixed row is kept tight on purpose, because each pixel they
+     take is a pixel off the device's height: the bar's own height plus a
+     rem to the crumb, the crumb and the number sharing one line (crumb
+     left, number right) instead of stacking, a short run under the cue.
+     The middle row is the one `1fr`. */
+  .hero[data-mode="page"] .grid {
+    /* The list's geometry, exactly: same twelve columns, same gap, same
+       gutter. The device then sits in the same columns on both sides of
+       a hand-over and has nowhere to slide — it grows in place. This
+       used to be `1fr auto 1fr`, which centred the device on the window
+       while the list hangs it in the right-hand seven columns, and the
+       ~273px between those two centres was the jump. */
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    column-gap: clamp(1rem, 2vw, 2rem);
+    padding-inline: var(--gutter);
+    /* Just the rem of --band-top. The bar is above the hero, not over
+       it, so there is nothing here to clear. */
+    padding-top: 1rem;
+    padding-bottom: clamp(1rem, 2vw, 1.75rem);
+  }
+  .hero[data-mode="page"] .text { display: contents; }
+
+  .hero[data-mode="page"] .above { grid-area: 1 / 1 / 2 / -1; margin: 0 var(--trim) var(--s-2); }
+  .hero[data-mode="page"] .label {
+    grid-area: 1 / 1 / 2 / -1;
+    justify-self: end;
+    align-self: start;
+    margin: 0 var(--trim);
+    line-height: 1.5rem;
+  }
+  .hero[data-mode="page"] .lede {
+    grid-area: 2 / 1 / 3 / 6;
+    align-self: center;
+    container-type: inline-size;
+  }
+  .hero[data-mode="page"] .plinth { grid-area: 2 / 6 / 3 / -1; }
+  .hero[data-mode="page"] .spec { grid-area: 3 / 1 / 4 / -1; }
+  .hero[data-mode="page"] .cue { grid-area: 4 / 1 / 5 / -1; }
+
+  /* The captions read down the left column, the way they do in a list,
+     so the name starts in the same place on both sides of a hand-over
+     and only has to change size. They used to be set against the object
+     — title ranged right, lead ranged left — which is what put the lead
+     in the flank on the far side of the device and left the device no
+     column it could share with the list. */
+  .hero[data-mode="page"] .title {
+    margin: 0;
+    text-align: left;
+    text-wrap: balance;
+    font-size: clamp(1.5rem, 0.6rem + 1.4vw, 2.5rem);
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+  .hero[data-mode="page"] .refusal {
+    max-width: 32ch;
+    margin: var(--s-3) 0 0;
+    font-size: var(--t-small);
+    line-height: 1.5;
+    letter-spacing: 0;
+  }
+
+  /* The spec strip: the same rows, turned on their side and spread along
+     the foot, label over value, so it reads as a caption board and not
+     as a column crowding the object. */
+  .hero[data-mode="page"] .spec {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    max-width: none;
+    margin: 0 var(--trim);
+    column-gap: clamp(1rem, 2vw, 2rem);
+  }
+  .hero[data-mode="page"] .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.15rem;
+    padding-block: 0.65rem 0;
+    border-bottom: none;
+  }
+
+  .hero[data-mode="page"] .cue {
+    position: static;
+    justify-self: center;
+    margin-top: var(--s-3);
+  }
+
+  /* How big the device gets. The case study's device is the centrepiece,
+     so it takes everything the captions can spare, on both axes.
+
+     Height: --room is what the middle row really has, the hero's height
+     — which is the window less the bar standing above it — less the
+     fixed rows above and below it (--band-top: a rem, the crumb and the
+     number; --band-bottom: the spec strip, the cue and the foot padding
+     — measured, with a few pixels over so a wrapped spec line does not
+     push the device into it). --art is all of that. The canvas is the
+     slot, and the slot is framed with the model's turn inside it (the
+     cameras in DeviceScene are drawn for these aspects, opened out by
+     HEADROOM), so every pixel of air the rotation, the float and the
+     pointer tip need already lives inside the slot and none of it has
+     to be reserved outside it.
+
+     Width: the slot may take the stage's width less two flanks and the two
+     gaps. A flank is never narrower than --flank: 180px on a 1440 window,
+     150px on a 1024 one, eased between and held beyond, which is the
+     least the title and the lead line need for a readable measure. --stage-w
+     is the width the grid has, which is the site's column (--wrap) plus
+     up to 16rem more on a large window: the device is the one thing on
+     the page worth breaking the column for, and 80rem left a 1920 window
+     with a device barely bigger than the list's. The width, not the
+     height, is the binding limit on a macbook; the height is on a phone.
+
+     --stage-w is the width .wrap would have, widened, written without a
+     percentage: the window less two margins, held to --stage-wrap. It
+     feeds the device's width, so it must NOT use --gutter or anything
+     else with a percentage in it — see the grid above. 100vw over-reads
+     by a classic scrollbar's width (15px), and the slot would take that
+     out of the two flanks, which is the one place the floor must hold, so
+     the 1rem taken off here pays for it in advance. */
+  .hero[data-mode="page"] {
+    --stage-wrap: 96rem;
+    --stage-w: calc(min(calc(100vw - 2 * var(--margin)), var(--stage-wrap)) - 1rem);
+    --stage-gutter: max(var(--margin), calc((100vw - var(--stage-wrap)) / 2));
+    /* The grid sits on the page's own column now (it takes --gutter,
+       like the list), so the full-width parts are already lined up with
+       the bar and nothing has to be pulled back. */
+    --trim: 0px;
+    --gap: clamp(1.25rem, 2.4vw, 2.75rem);
+    --flank: clamp(150px, calc(150px + (100vw - 1024px) * 0.0721), 180px);
+
+    /* The hero is as tall as the window LESS THE BAR, because the bar is
+       in flow: it is sticky, not fixed, so it takes its height out of the
+       page before the hero starts and the hero's top edge is already
+       under it. A full 100svh here put the foot of the hero — the spec
+       strip and the cue — that same distance below the bottom of the
+       window, which is what sliced the strip in half.
+
+       --bar is the bar's measured height, published on the root by
+       components/transition/TransitionProvider.tsx. --nav-h is only the
+       fallback for the first frame: the bar is sized by its content, so
+       the 4rem token under-reads it by a dozen pixels, and a dozen
+       pixels of the strip is still a sliced strip. */
+    --bar: var(--bar-h, var(--nav-h));
+    --h: calc(min(100svh, 1180px) - var(--bar));
+
+    /* And because the bar is outside the hero now, the top band is only
+       what is inside it: the rem above the crumb and the crumb's own
+       line. It used to carry the bar as well, which counted it twice. */
+    --band-top: calc(1rem + 2rem);
+    --band-bottom: calc(clamp(1rem, 2vw, 1.75rem) + 6.1rem);
+    --room: calc(var(--h) - var(--band-top) - var(--band-bottom));
+    /* All of the room, not 95% of it. The 5% used to buy air for the
+       float and the pointer tip outside a slot that the model filled to
+       its edges; the slot now carries that air inside it (see .fig and
+       HEADROOM), so taking it twice would only make the device smaller
+       for nothing on a window that has little height to spare.
+       The floor matters: on a window short enough that the two bands eat
+       the whole hero, --room goes negative, and a negative width is an
+       invalid declaration, not a small device. */
+    --art: max(12rem, var(--room));
+    --span: calc(var(--stage-w) - 2 * var(--flank) - 2 * var(--gap));
+  }
+  .hero[data-mode="page"] .plinth {
+    place-items: center;
+    margin: 0;
+    padding: 0;
+    /* Back to the automatic minimum (the base rule zeroes it): the
+       middle track must not be allowed to shrink below the slot it holds,
+       or a tight window would squeeze the track and let the slot spill
+       over the captions instead of squeezing the captions. */
+    min-width: auto;
+  }
+  /* The width that makes the slot exactly --art tall, at the slot's own
+     aspect — which is the device's aspect opened out by HEADROOM, so the
+     divisors here have to be the ones in .fig, not 3, 11 and 8.
+
+     The slot may run one gap wider than its track. It is centred in it,
+     so that is half a gap either side: the growth has to come from
+     somewhere now that the device keeps the list's columns, and the gap
+     is the only room it can take without reaching the lede beside it.
+     The device therefore grows about the same centre it already had,
+     which is the whole point — it has nowhere to slide to. */
+  .hero[data-mode="page"] .fig {
+    width: min(
+      calc(var(--fig-w) * var(--fig-grow)),
+      calc(var(--art) * 4 / 3.36),
+      calc(100% + var(--gap)),
+      68rem
+    );
+  }
+  .hero[data-mode="page"] .fig[data-kind="macbook"] {
+    width: min(
+      calc(var(--fig-w) * var(--fig-grow)),
+      calc(var(--art) * 16 / 12.32),
+      calc(100% + var(--gap)),
+      68rem
+    );
+  }
+  .hero[data-mode="page"] .fig[data-kind="iphone"] {
+    width: min(
+      calc(var(--fig-w) * var(--fig-grow)),
+      calc(var(--art) * 5 / 8.96),
+      calc(100% + var(--gap)),
+      31rem
+    );
+  }
+}
+
+/* ── the page arrives after the device ──────────────────────
+   The case study's text waits for the device to land, then comes up in
+   turn. Plain CSS on purpose. It cannot hang off html[data-vt]: that
+   attribute is removed the moment the transition finishes, and an
+   animation whose selector stops matching is cancelled, so anything
+   still waiting would jump to its end. Played on a direct load too, it
+   is simply the hero settling in. The title is a morph target and has
+   been travelling since the first frame, so it is the one thing that is
+   not held back. Delays are fractions of the transition's length, which
+   is when the device lands. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero[data-mode="page"] .text > :not(.title) {
+    animation: hero-arrive 0.6s var(--vt-ease, ease) both;
+    animation-delay: calc(var(--vt-dur, 0.9s) * 0.6);
+  }
+  .hero[data-mode="page"] .text > .refusal { animation-delay: calc(var(--vt-dur, 0.9s) * 0.7); }
+  .hero[data-mode="page"] .text > .spec    { animation-delay: calc(var(--vt-dur, 0.9s) * 0.8); }
+  .hero[data-mode="page"] .text > .cue     { animation-delay: calc(var(--vt-dur, 0.9s) * 0.95); }
+}
+@keyframes hero-arrive {
+  from { opacity: 0; translate: 0 14px; }
+}
+
+/* ── the device ─────────────────────────────────────────────
+   .fig is the slot the device layer draws the model over (and the box
+   the static stand-in fills): the model turns inside its canvas, and the
+   stand-in is flat.
+   Its size is set here per device and its aspect leaves the model room
+   to turn and float without touching the edges. Each width is capped by
+   the viewport's height as well as its width, so a short, wide window
+   does not get a device taller than the hero it sits in. The cameras in
+   DeviceScene are framed for these aspects.
+
+   The aspects used to be the device's own (4:3, 16:11, 5:8) and the
+   model was drawn right out to the edges, so the top and the foot of
+   the turn — where the object leans, floats and is widest — were sliced
+   off by the canvas. Each box is now HEADROOM (1.12, DeviceScene.tsx)
+   TALLER at the same width: 4/3 becomes 4/3.36, 16/11 becomes 16/12.32,
+   5/8 becomes 5/8.96. The model itself did not grow with it. The camera
+   there widens its vertical frustum by exactly the same factor, so the
+   model still draws at the same number of pixels in the same place and
+   the extra height is empty air, half above it and half below. The two
+   numbers are one decision: change the aspects here and HEADROOM there
+   together, or the model starts growing or shrinking with the box. */
+.fig {
+  position: relative;
+  /* The slot in a list, and the base the page's own slot is grown from.
+     The two used to be sized independently — this capped at 46rem, the
+     page's capped at 68rem and --span — so they agreed at the window
+     the design was drawn at and drifted apart above it: 1.20x the list
+     slot at 1512, 1.46x by 2560, since this one stops growing at 46rem
+     (about 1533px of window) and that one does not. The device crosses
+     that difference on a hand-over, so the wider the screen the further
+     and the faster it had to fly. Expressing the page's slot as a fixed
+     multiple of this one holds the move to the same gesture on every
+     screen; its own caps stay on as guards. */
+  --fig-w: min(48vw, 46rem, 100svh);
+  /* How much bigger the device is on a project page than in a list.
+     1 hands it over at exactly the size it left, so the move is a
+     translation and nothing about the device changes under the
+     reader. The two rules worked out to 1.2 at 1512, the window the
+     heroes were composed at, which is the old look if you want the
+     device to grow into the page; anything above that is the hero
+     getting bigger as it arrives. The page's own caps below still
+     apply, so this can only ever ask for less room, never more. */
+  --fig-grow: 1.2;
+  width: var(--fig-w);
+  aspect-ratio: 4 / 3.36;
+}
+.fig[data-kind="macbook"] {
+  --fig-w: min(50vw, 48rem, 104svh);
+  width: var(--fig-w);
+  aspect-ratio: 16 / 12.32;
+}
+.fig[data-kind="iphone"] {
+  --fig-w: min(24vw, 22rem, 46svh);
+  width: var(--fig-w);
+  aspect-ratio: 5 / 8.96;
+}
+
+/* There used to be a CSS floor shadow under the stand-in here, faded out
+   once the model took over. Both it and the stand-in's own shadow are
+   gone: the exhibit is lit, not grounded, and a painted pool under a
+   device that floats and turns was always pointing at a floor that is
+   not there. Nothing replaces it. */
+
+/* ── narrow screens ─────────────────────────────────────────
+   Card, then device, stacked. Still the same rules in every mode, so the
+   hand-over holds at this size too. */
+@media (max-width: 959px) {
+  .pin {
+    height: auto;
+    min-height: var(--h);
+  }
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: clamp(3rem, 10vw, 4.5rem);
+    height: auto;
+    padding-bottom: clamp(4rem, 14vw, 6rem);
+  }
+  .text,
+  .plinth { grid-column: 1; }
+  /* Measured against the column rather than the window, so the slot
+     cannot poke past the grid's gutter into the pin's horizontal clip:
+     90vw is wider than the column at 375px, and the two pixels that
+     bought were two pixels off the side of the device. The pin's height
+     is auto here, so nothing is cut off the bottom either. */
+  .fig { width: min(100%, 36rem); }
+  .fig[data-kind="macbook"] { width: min(100%, 38rem); }
+  .fig[data-kind="iphone"] { width: min(62%, 16rem); }
+  .text { padding-top: calc(var(--nav-h) + 2rem); }
+  .stage {
+    background:
+      radial-gradient(
+        ellipse 90% 45% at 50% 68%,
+        color-mix(in srgb, var(--stage) 55%, #fff) 0%,
+        var(--stage) 45%,
+        var(--stage-alt) 100%
+      ),
+      var(--stage-alt);
+  }
+  .cue { display: none; }
+}
+

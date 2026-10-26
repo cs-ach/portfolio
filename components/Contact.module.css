@@ -1,0 +1,82 @@
+.section { text-align: center; }
+
+.inner {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-4);
+  max-width: 48rem;
+  margin-inline: auto;
+}
+
+
+.heading {
+  font-size: var(--t-h2);
+  margin: 0;
+  max-width: 16ch;
+}
+
+.lead {
+  font-size: var(--t-body);
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 44ch;
+}
+
+/* The address as the largest thing in the section, because it is the
+   only action that matters here. */
+a.address {
+  font-size: clamp(1.375rem, 4.2vw, 2.75rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  margin-top: var(--s-3);
+  word-break: break-word;
+  /* The wipe itself comes from .act-underline. Only two things are
+     local: this rule is thicker, because 2px under 2.75rem type is a
+     hairline, and it travels slower, because it is crossing the whole
+     width of the section rather than a word. */
+  background-size: 0% 3px;
+  transition-duration: var(--d-slow), var(--d-fast), var(--d-fast);
+}
+
+@media (hover: hover) {
+  a.address:hover { background-size: 100% 3px; }
+}
+a.address:focus-visible { background-size: 100% 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  a.address { transition-duration: var(--d-fast); }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+  margin-top: var(--s-4);
+}
+
+.copy {
+  font-size: var(--t-small);
+  min-height: 46px;
+}
+
+/* The confirmation eases in over --d-base rather than the pill's usual
+   --d-fast: the label has changed under the pointer, and a colour that
+   arrives as fast as a hover would make it look like one. It leaves on
+   the same curve when the state times out. */
+.copy[data-state="done"],
+.copy[data-state="failed"] {
+  transition-duration: var(--d-base);
+}
+.copy[data-state="done"] { border-color: var(--accent); color: var(--accent); }
+/* A failure is not a hover answer either; it is a quieter, duller
+   border so the button does not look like it succeeded. */
+.copy[data-state="failed"] { border-color: var(--line-strong); color: var(--faint); }
+
+/* The label swaps between three different widths, so the pill would
+   jump as it changes. Easing the width is off the table (geometry),
+   so the pill is simply held at the width of the longest of them. */
+.copy { min-width: 11.5rem; }

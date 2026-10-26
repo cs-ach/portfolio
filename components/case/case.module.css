@@ -1,0 +1,108 @@
+/* Shared pieces of a case study: the numbered section head and the
+   intro's metadata grid. The page layout itself lives next to the
+   route in app/work/[slug]/project.module.css. */
+
+/* ── section head ─────────────────────────────────────────── */
+
+/* Number and heading on one baseline above a hairline that runs the
+   full width of .wrap. The number column is fixed so headings line up
+   down the page whatever their length. */
+.head {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--s-4);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line-strong);
+  margin-bottom: clamp(2rem, 5vw, 4.5rem);
+}
+
+.headNum { color: var(--faint); }
+
+.headTitle {
+  font-size: var(--t-h2);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+
+/* ── metadata grid ────────────────────────────────────────── */
+
+.metaWrap { min-width: 0; }
+
+/* Two columns from the start: the values are short, and a single
+   column of five rules on a phone reads as a form. The wide items
+   (Stack, Source) take a full row because their values are lists. */
+.meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(1rem, 2.5vw, 2rem);
+  row-gap: clamp(1.25rem, 2.5vw, 2rem);
+  margin: 0;
+}
+
+.metaItem {
+  min-width: 0;
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+}
+.metaWide { grid-column: 1 / -1; }
+
+.metaItem dt { display: block; margin-bottom: var(--s-2); }
+
+.metaValue {
+  margin: 0;
+  font-size: var(--t-body);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* Stack and source run inline, comma-free, wrapping as needed. */
+.metaList {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  margin: 0;
+  padding: 0;
+}
+
+/* Both links leave the page (a live site, a repository), so each carries
+   .act and .act-nudge with an up-right arrow. Colour and press
+   transitions come from the utility. */
+.metaLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  min-height: 44px;
+  margin-block: -0.6rem;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  text-decoration-color: var(--line-strong);
+}
+@media (hover: hover) {
+  .metaLink:hover { color: var(--accent); text-decoration-color: currentColor; }
+}
+
+.backRow {
+  display: flex;
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  min-height: 44px;
+  font-size: var(--t-small);
+  font-weight: 500;
+  color: var(--muted);
+}
+@media (hover: hover) {
+  .back:hover { color: var(--ink); }
+}

@@ -1,0 +1,666 @@
+/* ============================================================
+   TOKENS
+
+   Light ground, near-black ink, one warm accent used sparingly.
+   Surfaces are white cards on a faintly grey page, separated by
+   hairlines rather than shadows. Corners are generous. Nothing
+   is tinted toward a brand hue, because the photograph and the
+   project screens are the only colour the page needs.
+   ============================================================ */
+
+:root {
+  /* The loading sequence's wall (components/ui/Preloader). It lives here
+     rather than only in the loader's own stylesheet because the first
+     frame of a landing page is painted from it, before React exists at
+     all: see "the first frame" below. Deliberately not the page colour —
+     the machine reads as an object in front of a wall rather than as
+     part of the page behind it. */
+  --loader-wall:
+    radial-gradient(120% 90% at 50% 38%, #E2E2E7 0%, #CFCFD6 62%, #C2C2CA 100%);
+
+  --page:      #F5F5F7;
+  --surface:   #FFFFFF;
+  --surface-2: #EDEDF0;
+  --dark:      #1D1D1F;
+  --dark-2:    #2C2C2E;
+
+  --ink:       #1D1D1F;
+  --muted:     #515154;
+  /* #86868B was 3.3:1 on the page ground and 3.6:1 on white, both
+     short of the 4.5:1 floor for body-sized text. This clears it on
+     both surfaces. */
+  --faint:     #6B6B70;
+  --on-dark:   #F5F5F7;
+  --on-dark-muted: #A1A1A6;
+
+  --line:        #E3E3E6;
+  --line-strong: #D2D2D7;
+
+  /* Used for links, the loading mark, and nothing decorative. */
+  --accent:      #C2410C;
+  /* Deliberately out of the terracotta band the taste linter rejects
+     (hue 6-30, sat .38-.85, light .42-.72): this is lighter than .72,
+     so it stays legal if it is ever promoted onto a real surface. */
+  --accent-soft: #F6B38C;
+
+  /* ── type ──────────────────────────────────────────────── */
+  --t-micro: 0.6875rem;
+  --t-mono:  clamp(0.8125rem, 0.79rem + 0.12vw, 0.875rem);
+  --t-small: 0.9375rem;
+  --t-body:  1rem;
+  --t-lead:  clamp(1.1875rem, 1.06rem + 0.62vw, 1.6875rem);
+  --t-h3:    clamp(1.375rem, 1.26rem + 0.5vw, 1.625rem);
+  --t-h2:    clamp(1.875rem, 1.42rem + 2.1vw, 3.25rem);
+  --t-h1:    clamp(2.75rem, 1.35rem + 6.2vw, 5.75rem);
+
+  /* ── space ─────────────────────────────────────────────── */
+  --s-1:.25rem; --s-2:.5rem;  --s-3:.75rem; --s-4:1rem;
+  --s-5:1.5rem; --s-6:2rem;   --s-7:3rem;   --s-8:4rem;
+  --s-9:6rem;   --s-10:8rem;  --s-11:10rem;
+
+  --wrap:   80rem;
+  --margin: clamp(1.25rem, 4vw, 3.5rem);
+  /* The sticky bar's height. Anything pinned under it pads by this so
+     its content is never hidden behind the bar. */
+  --nav-h:  4rem;
+
+  --r-pill: 999px;
+  --r-card: 20px;
+  --r-band: 24px;
+  --r-inner: 14px;
+
+  /* ── motion ────────────────────────────────────────────── */
+  --ease:     cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --d-fast: 200ms; --d-base: 420ms; --d-slow: 760ms;
+
+  /* ── interaction (the contract in design/08-INTERACTION.md) ──
+     Press is deliberately quicker and flatter than hover. Hover is a
+     question the page answers at leisure; a press is a fact, and a
+     fact that arrives on the hover curve feels like lag. The release
+     is allowed to ease back on --ease, because that is the hand
+     leaving rather than the hand landing. */
+  --d-press:    90ms;
+  --ease-press: cubic-bezier(0.3, 0, 0.2, 1);
+  --lift:  -2px;   /* hover rise for things that read as raised */
+  --press: 0.97;   /* active scale for pressable things */
+  --nudge: 3px;    /* directed travel for an arrow or other glyph */
+
+  color-scheme: light;
+}
+
+*,*::before,*::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+
+/* No overflow-x here, on purpose. `clip` on the root propagates to the
+   viewport and pairs with a visible overflow-y, which Chrome resolves
+   to a viewport that does not scroll at all: the page silently freezes.
+   `hidden` here would work but turns the root into a scroll container
+   with its own quirks. Horizontal overflow is instead contained where
+   it is actually produced, with `overflow-x: clip` on the pinned hero. */
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--page);
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, svg, canvas, video { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--ink); color: var(--page); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+/* ── type roles ─────────────────────────────────────────── */
+
+h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.025em; text-wrap: balance; }
+
+.display {
+  font-size: var(--t-h1);
+  font-weight: 600;
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+}
+
+.mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--t-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The small supporting line: stack and year under a project title,
+   column heads in the footer and the resume.
+
+   Not monospace, not uppercase, not letter-spaced. Monospace outside
+   code is a tell, and a row of tiny tracked capitals is the single
+   most overused "technical" gesture on engineering portfolios. Set in
+   the body face at a size that is actually readable, and distinguished
+   by colour and weight instead. Tabular figures keep years and
+   numbers aligned, which was the only honest reason to reach for mono
+   in the first place. */
+.label {
+  font-size: var(--t-small);
+  font-weight: 500;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.lead  { font-size: var(--t-lead); line-height: 1.4; letter-spacing: -0.015em; text-wrap: pretty; }
+.small { font-size: var(--t-small); line-height: 1.55; }
+.muted { color: var(--muted); }
+.faint { color: var(--faint); }
+
+/* ── layout ─────────────────────────────────────────────── */
+
+.wrap    { width: min(100% - (var(--margin) * 2), var(--wrap)); margin-inline: auto; }
+.section { padding-block: clamp(4rem, 8vw, 8rem); }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+.skip {
+  position: fixed; left: var(--s-4); top: var(--s-4); z-index: 10000;
+  transform: translateY(-250%);
+  background: var(--ink); color: var(--page);
+  padding: var(--s-3) var(--s-5);
+  border-radius: var(--r-pill);
+  font-size: var(--t-small);
+  transition: transform var(--d-fast) var(--ease);
+}
+.skip:focus { transform: translateY(0); }
+
+/* ── pills ──────────────────────────────────────────────── */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+  min-height: 48px;
+  padding: 0 1.6rem;
+  border-radius: var(--r-pill);
+  font-size: var(--t-body);
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition:
+    background-color var(--d-fast) var(--ease),
+    border-color var(--d-fast) var(--ease),
+    color var(--d-fast) var(--ease),
+    transform var(--d-fast) var(--ease);
+}
+/* The press is on a curve of its own, so the pill drops the moment it
+   is hit and floats back on the hover curve when it is let go. Listing
+   transform twice would be a conflict; instead the :active rule swaps
+   the timing for the duration of the press. */
+.pill:active {
+  transform: scale(var(--press));
+  transition-duration: var(--d-press);
+  transition-timing-function: var(--ease-press);
+}
+
+/* Hover is a pointer statement. A touch device has no pointer to
+   hover with, and sticks on the last-tapped element if we pretend it
+   does, so every hover rule on the page is gated. */
+@media (hover: hover) {
+  .pill-solid:hover  { background: #000; }
+  .pill-ghost:hover  { border-color: var(--ink); }
+  .pill-invert:hover { background: #FFF; }
+  /* The raise is on the pills that read as objects sitting on the
+     ground. The ghost pill is an outline on the surface and would
+     look detached, so it answers with its border instead. */
+  .pill-solid:hover,
+  .pill-invert:hover { transform: translateY(var(--lift)); }
+}
+
+.pill-solid { background: var(--ink); color: var(--page); }
+.pill-ghost { background: var(--surface); color: var(--ink); border-color: var(--line-strong); }
+.pill-invert { background: var(--page); color: var(--ink); }
+
+/* A hovered-and-pressed pill has to land back on the ground, not
+   shrink two pixels above it, or the press reads as a wobble. */
+@media (hover: hover) {
+  .pill-solid:active,
+  .pill-invert:active { transform: translateY(0) scale(var(--press)); }
+}
+
+/* ── interaction primitives ─────────────────────────────────
+   The contract lives in design/08-INTERACTION.md. These three classes
+   are the whole of it: every other stylesheet composes them rather
+   than inventing a hover of its own, which is what keeps a nav link,
+   a card and an icon button feeling like one hand made them.
+
+   .act carries no hover of its own on purpose. What an element does
+   on hover is local knowledge — a link brightens, a card raises, an
+   icon button borders up — and baking one of those in here would mean
+   every consumer first undoing it. What .act does supply is the two
+   things that must not vary: the transition list (transform, opacity
+   and colour, never geometry) and the press. */
+
+.act {
+  transition:
+    transform       var(--d-fast) var(--ease),
+    opacity         var(--d-fast) var(--ease),
+    color           var(--d-fast) var(--ease),
+    background-color var(--d-fast) var(--ease),
+    border-color    var(--d-fast) var(--ease),
+    /* Underlined links light their rule on hover. It belongs in this
+       list rather than in each module, because a module's own
+       `transition` shorthand replaces the whole of this one. */
+    text-decoration-color var(--d-fast) var(--ease);
+}
+
+.act:active {
+  transform: scale(var(--press));
+  transition-duration: var(--d-press);
+  transition-timing-function: var(--ease-press);
+}
+
+/* Motion-directed. The arrow goes the way the action goes: forward for
+   a link onward, up-right for somewhere off-site, down for a jump down
+   the page. On press it travels twice as far, so the glyph commits
+   before the navigation does and the click has somewhere to land.
+
+   The direction is a pair of unit multipliers rather than four
+   separate rules, so adding a direction is one line and the travel
+   distance stays in exactly one place. */
+.act-nudge { --nx: 1; --ny: 0; }
+.act-nudge[data-dir="left"]     { --nx: -1; --ny:  0; }
+.act-nudge[data-dir="right"]    { --nx:  1; --ny:  0; }
+.act-nudge[data-dir="up"]       { --nx:  0; --ny: -1; }
+.act-nudge[data-dir="down"]     { --nx:  0; --ny:  1; }
+/* Not 1/-1: a diagonal of two full nudges travels 1.41x as far as a
+   straight one and reads as a longer throw. These are cos/sin 45. */
+.act-nudge[data-dir="up-right"] { --nx: 0.707; --ny: -0.707; }
+
+.act-nudge [data-arrow] {
+  transition: transform var(--d-fast) var(--ease);
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .act-nudge:hover [data-arrow] {
+    transform: translate(calc(var(--nudge) * var(--nx)), calc(var(--nudge) * var(--ny)));
+  }
+}
+
+/* Keyboard users get the travel too: the glyph is the only part of
+   this affordance that says which way the action goes, and a focus
+   ring alone does not say it. */
+.act-nudge:focus-visible [data-arrow] {
+  transform: translate(calc(var(--nudge) * var(--nx)), calc(var(--nudge) * var(--ny)));
+}
+
+.act-nudge:active [data-arrow] {
+  transform: translate(calc(var(--nudge) * 2 * var(--nx)), calc(var(--nudge) * 2 * var(--ny)));
+  transition-duration: var(--d-press);
+  transition-timing-function: var(--ease-press);
+}
+
+/* A text link whose rule wipes in from the left. It is a painted
+   background rather than text-decoration because only the background
+   can be animated from nothing to full width; text-decoration can
+   only appear. The 2px sits on the text's own baseline box, so it
+   tracks the line however the text wraps. */
+.act-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 2px;
+  transition:
+    background-size var(--d-base) var(--ease),
+    transform var(--d-fast) var(--ease),
+    color var(--d-fast) var(--ease);
+}
+
+@media (hover: hover) {
+  .act-underline:hover { background-size: 100% 2px; }
+}
+.act-underline:focus-visible { background-size: 100% 2px; }
+
+/* A word cannot scale down convincingly — the letterforms blur and the
+   whole line shifts off its grid. It settles by 1px instead, which is
+   the same gesture at the scale of type. */
+.act-underline:active {
+  transform: translateY(1px);
+  transition-duration: var(--d-press);
+  transition-timing-function: var(--ease-press);
+}
+
+/* Under reduced motion nothing travels. Colour and the underline's
+   presence still answer, because the affordance itself is not
+   decoration — it is how you know the thing is live. The underline is
+   snapped on rather than wiped, so there is no sliding edge. */
+@media (prefers-reduced-motion: reduce) {
+  .act,
+  .act-underline,
+  .act-nudge [data-arrow],
+  .pill {
+    transition-property: color, background-color, border-color, opacity;
+  }
+  .act:active,
+  .act-underline:active,
+  .pill:active,
+  .pill-solid:hover,
+  .pill-invert:hover,
+  .pill-solid:active,
+  .pill-invert:active,
+  .act-nudge:hover [data-arrow],
+  .act-nudge:focus-visible [data-arrow],
+  .act-nudge:active [data-arrow] { transform: none; }
+}
+
+/* ── entrance ───────────────────────────────────────────────
+   Opacity reveals only ever apply once script has marked the
+   document, so a browser without it renders the page visible. */
+
+[data-reveal] { --reveal-delay: 0ms; }
+
+html[data-js] [data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity var(--d-base) var(--ease) var(--reveal-delay),
+    transform var(--d-slow) var(--ease) var(--reveal-delay);
+}
+html[data-js] [data-reveal][data-shown="true"] { opacity: 1; transform: none; }
+
+/* While the loading sequence is still running nothing below it
+   should start its own entrance. */
+html[data-loading] [data-reveal] { transition: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  html[data-js] [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── interface fragments ────────────────────────────────────
+   The figures under components/figures, components/fig01 and the
+   device shell are rebuilds of real product UI: a dark device screen,
+   a dark app panel. They were authored against the device's own
+   palette and they should keep it, because a screen is dark whatever
+   colour the page around it is.
+
+   So rather than restyle them for a light page, the page gives them
+   back the context they expect. These names are deliberately the ones
+   those stylesheets already use. Scoped, never global. */
+.ui-dark {
+  --bg:            #080A14;
+  --surface:       #11141F;
+  --surface-2:     #181C29;
+  --void:          #04050C;
+  --ink:           #F2F4F8;
+  --muted:         #98A1B8;
+  --accent:        #0A84FF;
+  --accent-strong: #0B62C4;
+  --accent-text:   #74B8FF;
+  --accent-ink:    #FFFFFF;
+  --radius:        0px;
+
+  --step-small:   0.8125rem;
+  --step-body:    0.9375rem;
+  --step-lead:    1.125rem;
+  --step-head:    1.375rem;
+  --step-display: 2rem;
+
+  background: var(--bg);
+  color: var(--ink);
+  color-scheme: dark;
+}
+
+/* ── the loading hand-over ──────────────────────────────────
+   While the loading sequence is framing the page inside a device
+   display, the page is lifted above the sequence's backdrop but kept
+   below its chrome, so the display reads as a window onto the real
+   site rather than a picture of one. The transform that puts it there
+   is written by the Preloader, which measures the display. */
+
+#stage { background: var(--page); }
+
+/* ── the first frame ────────────────────────────────────────
+   The loader is React's, and React is not there for the first paint:
+   the server sends the whole page, the browser paints it, and only then
+   does hydration put the backdrop up. That is a flash of the site in
+   front of its own introduction, and on a landing page it is the first
+   thing anyone sees.
+
+   So the curtain goes up before the first paint instead, from an inline
+   script in the document (app/layout.tsx) that raises `data-loading` on
+   the root when this load is one the loader will play. These two rules
+   are what that flag paints: the loader's wall, and no page under it.
+   The wall is the same ground the React backdrop fades from, so the
+   hand-over from one to the other is not a change of colour.
+
+   Both are let go the moment the sequence has the page framed inside
+   the machine's display (`data-boot`, written by the Preloader as it
+   places the page), which is when the page has to be visible again —
+   and on every path where the loader gives up, because every one of
+   them clears the flag. */
+/* `fixed` so the wall is positioned against the window, exactly as the
+   React backdrop is: painted against the body's own box instead, the
+   ellipse would be spread over the whole document and the glow would
+   jump as the backdrop took over. */
+html[data-loading]:not([data-boot]) body { background: var(--loader-wall) fixed; }
+html[data-loading]:not([data-boot]) #stage { visibility: hidden; }
+/* A phone gets no machine and no wall: its first frame is the boot
+   screen's own black, with the disc that is the centre of the mark in
+   the middle of the window (components/ui/Preloader.module.css,
+   `.pbCore`: 62% of an 18vw mark, so a radius of 5.58vw). The boot
+   screen then mounts over this with the same picture, and the black is
+   let go underneath it. Same specificity as the rule above, and after
+   it. The `fixed` layer is there for the same reason as above, and the
+   solid colour under it so nothing of the page's ground can show. */
+html[data-loading="phone"]:not([data-boot]) body {
+  background:
+    radial-gradient(circle at 50% 50%, #F5F5F7 5.58vw, rgb(245 245 247 / 0) calc(5.58vw + 1px)) fixed,
+    #000;
+}
+
+/* Under the device, never over it. The page is lifted above the
+   sequence's backdrop (9998) but kept below its chrome (10000), so the
+   frame always occludes the page rather than the page covering the
+   machine. The display is a hole in the chrome, and the page is
+   clipped to it, so nothing spills out around the device. */
+html[data-boot] #stage {
+  position: relative;
+  z-index: 9999;
+  transform-origin: 0 0;
+  will-change: transform, clip-path;
+}
+
+html[data-boot="zoom"] #stage {
+  transition:
+    transform 780ms cubic-bezier(0.5, 0, 0.2, 1),
+    clip-path 780ms cubic-bezier(0.5, 0, 0.2, 1);
+}
+
+/* ── smooth scroll ──────────────────────────────────────────
+   Lenis drives the wheel. Native smooth scrolling has to step aside
+   while it does, or every programmatic scroll is eased twice. */
+html.lenis, html.lenis body { height: auto; }
+.lenis-smooth { scroll-behavior: auto !important; }
+
+/* ── page transitions ───────────────────────────────────────
+   Written against the photographs the View Transitions API takes; the
+   timing is decided in components/transition. The site is a device, so
+   leaving a page is pushing it back into the screen: it shrinks a
+   little around the middle of the window, its corners round, it dims
+   and drifts up, while the next page rises from below and covers it.
+   The new top is at 100 - 100p of the screen, the old page's bottom
+   edge is never above that, so the two never part and nothing of the
+   ground shows between them. */
+
+:root {
+  --vt-ease: cubic-bezier(0.65, 0, 0.25, 1);
+  --vt-dur: 0.9s;
+}
+
+::view-transition-group(root) { animation-duration: var(--vt-dur); }
+
+::view-transition-old(root) {
+  animation: vt-leave var(--vt-dur) var(--vt-ease) both;
+  transform-origin: 50% 50%;
+}
+::view-transition-new(root) {
+  animation: vt-enter var(--vt-dur) var(--vt-ease) both;
+  box-shadow: 0 -24px 80px rgb(0 0 0 / 0.18);
+}
+
+@keyframes vt-leave {
+  from { clip-path: inset(0 round 0); }
+  to {
+    transform: translateY(-12vh) scale(0.92);
+    clip-path: inset(0 round var(--r-band));
+    filter: brightness(0.45);
+  }
+}
+@keyframes vt-enter {
+  from { transform: translateY(100vh); }
+}
+
+/* The bar does not take part. It keeps its own name, so it is lifted
+   out of the page photograph and simply cross-fades its active state,
+   and it stays above both pages and anything morphing between them.
+   Its blur cannot be photographed, so it is given a solid ground for
+   the length of the move. */
+html[data-vt] [data-site-nav] { background: var(--page); }
+[data-site-nav] { view-transition-name: site-nav; }
+::view-transition-group(site-nav) { z-index: 4; animation-duration: var(--vt-dur); }
+
+/* The morph. The card's figure and title travel to their places on the
+   case study while the pages swap behind them. They arrive a beat
+   before the page settles, so the eye has already landed. */
+::view-transition-group(vt-fig),
+::view-transition-group(vt-title) {
+  z-index: 2;
+  animation-duration: calc(var(--vt-dur) * 0.9);
+  animation-timing-function: var(--vt-ease);
+}
+::view-transition-group(vt-fig) { border-radius: var(--r-card); overflow: clip; }
+::view-transition-old(vt-fig),
+::view-transition-new(vt-fig) { height: 100%; object-fit: cover; }
+/* A title is photographed, so it grows as a picture would. That only
+   reads as the same words getting larger if both boxes hug the text:
+   a full-width heading box would stretch the small title sideways. */
+[data-vt-title], [data-vt-target="title"] { width: fit-content; }
+::view-transition-old(vt-title),
+::view-transition-new(vt-title) {
+  animation-duration: calc(var(--vt-dur) * 0.5);
+}
+
+/* A source with no partner on the new page (the case study's figure
+   landed below the fold) is still lifted out of the page photograph,
+   so on its own it would hang in place while the page leaves. It is
+   sent the same way as the page instead. */
+::view-transition-old(vt-fig):only-child,
+::view-transition-old(vt-title):only-child {
+  animation: vt-leave-short var(--vt-dur) var(--vt-ease) both;
+}
+
+/* With a morph, the new page arrives quicker and the old one does not
+   travel as far, so the morphing elements stay the subject. */
+html[data-vt="morph"]::view-transition-old(root) { animation-name: vt-leave-short; }
+@keyframes vt-leave-short {
+  to { transform: translateY(-6vh) scale(0.96); clip-path: inset(0 round var(--r-band)); filter: brightness(0.45); }
+}
+
+/* The hero hand-over. A project's hero on the home page, the project
+   index or the end of a case study is the same component as the top of
+   its own page, so there is nothing to slide: the stage travels to the
+   top of the window and grows to fill it, the device and the name move
+   to their places on it, and the rest of the old page dims away behind
+   while the new one comes up underneath.
+
+   The two heroes are deliberately composed differently (the page has a
+   bigger device further right and lower, a smaller title higher up, the
+   light moved with the device), so every part has somewhere to travel.
+   The groups do the travelling and the scaling of the stage and the
+   name; the device is carried live by its own layer (below). */
+::view-transition-group(vt-hero),
+::view-transition-group(vt-hero-title) {
+  animation-duration: var(--vt-dur);
+  animation-timing-function: var(--vt-ease);
+}
+::view-transition-group(vt-hero) { z-index: 1; }
+::view-transition-group(vt-hero-title) { z-index: 2; }
+::view-transition-group(site-nav) { z-index: 4; }
+/* The stage is a flat colour field, so stretching its photograph is
+   invisible; the name is not, and keeps its shape. */
+::view-transition-old(vt-hero),
+::view-transition-new(vt-hero) { width: 100%; height: 100%; object-fit: fill; }
+::view-transition-old(vt-hero-title),
+::view-transition-new(vt-hero-title) { height: 100%; object-fit: contain; animation-duration: calc(var(--vt-dur) * 0.6); }
+
+/* The device is not photographed. It is a live model in the persistent
+   device layer (components/three/DeviceLayer), which carries the same
+   canvas from the hero's slot to the case study's and turns the model in
+   the air on the way. A photograph of it would be a still: the old
+   page's snapshot would freeze the canvas, and two snapshots cross-
+   fading would show the model twice. So for a hero hand-over the layer
+   is named on its own, its old image is dropped, and its new image (the
+   live element, still drawing) is shown as it is, above the stage and
+   the title and below the bar. The group does not move: the layer is
+   the same full-window box on both sides. Other transitions leave it
+   unnamed, and it leaves with the page photograph like anything else. */
+html[data-vt="hero"] [data-device-layer] { view-transition-name: device-layer; }
+::view-transition-group(device-layer) { z-index: 3; animation: none; }
+::view-transition-old(device-layer) { display: none; }
+::view-transition-new(device-layer) { animation: none; }
+
+/* A hero hand-over does not actually take that route. The note above
+   assumes ::view-transition-new(device-layer) keeps drawing; it does
+   not. A named element is captured once and held as a still for the
+   whole transition, and that capture is taken after the arriving slot
+   has been measured, so the device is already at its destination on
+   the first frame and the travel underneath is never painted: a cut,
+   not a move. So hero navigations skip the view transition and move
+   the live layer on the travel's own clock (components/transition/
+   TransitionProvider, `heroNavigate`), and the rules above apply only
+   if one is ever started with data-vt="hero" again.
+
+   Without a transition there is no root photograph to rise, so the
+   arriving page comes up by itself behind the device. Opacity only:
+   the heroes' slots are measured from this subtree every frame while
+   the device travels to them, and a transform would move the
+   destination out from under it. The layer and the bar sit outside
+   main and are left alone, the device being the continuity. */
+/* Nothing is faded wholesale here any more. The stage extends into its
+   new shape and the title travels to its new setting, both played from
+   the leaving page's measurements (TransitionProvider, `morph`), and
+   only the parts that genuinely change — the captions, the page under
+   the hero — are brought up behind them (`raise`). Fading main would
+   have taken the background with it, which is the one thing that should
+   look continuous. */
+
+html[data-vt="hero"]::view-transition-old(root) {
+  animation: vt-dim calc(var(--vt-dur) * 0.6) var(--vt-ease) both;
+}
+html[data-vt="hero"]::view-transition-new(root) {
+  animation: vt-rise var(--vt-dur) var(--vt-ease) both;
+  box-shadow: none;
+}
+@keyframes vt-dim { to { opacity: 0; filter: brightness(0.6); } }
+@keyframes vt-rise { from { opacity: 0; transform: translateY(8vh); } }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}

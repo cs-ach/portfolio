@@ -1,0 +1,143 @@
+/* Two screens tall, with its contents pinned to the top of the
+   viewport. The extra height is the scroll budget for the portrait's
+   journey; the pin is what keeps the composition on screen while that
+   journey happens. */
+.hero {
+  position: relative;
+  height: 200svh;
+}
+
+.pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  /* Clears the translucent sticky bar, which floats over this. The
+     measurement in Hero.tsx reads this padding back as the nav height,
+     so the two can never disagree. */
+  padding-top: var(--nav-h);
+  padding-bottom: var(--s-5);
+  overflow: clip;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.78fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  /* Centred in the area under the bar with auto margins rather than
+     align-items on the pin. Plain centring splits any overflow evenly
+     above and below, so on a short window the top of the composition
+     was pushed up behind the bar and clipped. Auto margins collapse to
+     zero instead, so when it does not fit it starts under the bar and
+     runs off the bottom, which is the edge you can scroll towards. */
+  margin-block: auto;
+}
+
+/* ── text ─────────────────────────────────────────────────── */
+
+.text {
+  display: grid;
+  gap: clamp(1rem, 1.8vw, 1.5rem);
+  justify-items: start;
+  min-width: 0;
+}
+
+/* The cell the heading occupies at rest. Never transformed, so it can
+   be measured; the heading inside it is what moves. */
+.nameSlot { width: 100%; }
+
+.name {
+  margin: 0;
+  max-width: 11ch;
+  will-change: transform;
+}
+
+.rest {
+  display: grid;
+  gap: clamp(1rem, 1.8vw, 1.5rem);
+  justify-items: start;
+  min-width: 0;
+  will-change: transform, opacity;
+}
+
+.line { color: var(--ink); max-width: 32ch; margin: 0; }
+
+.sub {
+  font-size: var(--t-small);
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 42ch;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-2);
+}
+
+.social { margin-top: var(--s-1); }
+
+/* ── portrait ─────────────────────────────────────────────── */
+
+.portraitSlot {
+  justify-self: end;
+  /* Capped by height as well as width. While centred the portrait is
+     drawn at 1.14 times this with the name stacked under it, and that
+     whole column has to fit between the bar and the bottom of the
+     window. On a tall screen 20rem wins and nothing changes; on a short
+     one (a 768px laptop, or a window dragged down to 650) the height
+     term takes over before the name is pushed off the bottom. */
+  width: min(100%, 20rem, 38svh);
+}
+
+.portraitWrap {
+  margin: 0;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--surface-2);
+  will-change: transform;
+  /* The only shadow on the page. It gives the portrait somewhere to
+     sit while it is floating in the middle of the hero. */
+  box-shadow: 0 24px 70px -30px rgb(0 0 0 / 0.42);
+}
+
+.portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 22%;
+}
+
+/* ── narrow ───────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  /* The pin and the travel are both dropped: there is no room for a
+     portrait to cross the screen, and a stacked column is the better
+     layout anyway. */
+  .hero { height: auto; }
+  .pin {
+    position: static;
+    height: auto;
+    padding-block: clamp(2.5rem, 8vh, 4rem) clamp(2.5rem, 7vh, 4rem);
+    overflow: visible;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: clamp(1.75rem, 6vw, 2.5rem);
+  }
+  .text, .rest { justify-items: center; }
+  .name, .line, .sub { max-width: none; }
+  .actions { justify-content: center; }
+  .portraitSlot {
+    justify-self: center;
+    order: -1;
+    width: min(100%, 15rem);
+  }
+}

@@ -1,0 +1,45 @@
+/* The header row sits in the page's column; the heroes under it run the
+   full width of the window. No bottom padding: the last hero meets the
+   next section directly, as the heroes meet each other. */
+.section { padding-top: clamp(4rem, 8vw, 8rem); }
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-4);
+  align-items: baseline;
+  padding-bottom: var(--s-4);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--t-h3);
+}
+
+.count {
+  font-size: var(--t-small);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+}
+
+/* Carries .act and .act-nudge: the arrow travels right on hover and
+   further on press, and the colour and press transitions come from the
+   utility, so none is declared here. inline-flex because a transform
+   needs a box. */
+.all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  margin-left: auto;
+  font-size: var(--t-small);
+  color: var(--muted);
+}
+@media (hover: hover) {
+  .all:hover { color: var(--accent); }
+}
+
+/* Edge to edge, one after another. */
+.stack { list-style: none; }

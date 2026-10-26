@@ -1,0 +1,65 @@
+.footer {
+  border-top: 1px solid var(--line);
+  padding-block: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 3vw, 2.25rem);
+  background: var(--page);
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  gap: clamp(1.75rem, 3.5vw, 3rem);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.brand { display: grid; gap: 0.35rem; align-content: start; }
+
+.name { font-size: var(--t-body); font-weight: 600; letter-spacing: -0.02em; margin: 0; }
+.role { font-size: var(--t-small); color: var(--muted); margin: 0; }
+.social { margin-top: var(--s-3); }
+
+.col { display: grid; gap: 0.45rem; align-content: start; }
+
+.colHead {
+  margin: 0 0 var(--s-2);
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Every link carries .act and .act-underline (the underline wipes in on
+   hover), and the two that leave the list for somewhere else also carry
+   .act-nudge and an arrow. A grid item would stretch the full column,
+   which would make the press scale a wide invisible box, so each link is
+   shrunk to its own text. Colour and press transitions come from the
+   utility. */
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  justify-self: start;
+  font-size: var(--t-small);
+  color: var(--muted);
+  padding-block: 0.15em;
+  word-break: break-word;
+}
+@media (hover: hover) {
+  .link:hover { color: var(--ink); }
+}
+
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-5);
+  justify-content: space-between;
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line);
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .brand { grid-column: 1 / -1; }
+}
+
+@media (max-width: 480px) {
+  .cols { grid-template-columns: 1fr; }
+}

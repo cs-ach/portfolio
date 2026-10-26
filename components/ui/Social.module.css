@@ -1,0 +1,31 @@
+.list {
+  list-style: none;
+  display: flex;
+  gap: var(--s-3);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  /* The transition list and the press come from .act in globals; only
+     what this button raises to is local. */
+}
+
+@media (hover: hover) {
+  a.link:hover {
+    border-color: var(--ink);
+    transform: translateY(var(--lift));
+  }
+  /* Raised and then pressed: back to the ground and in, so the press
+     is unambiguously downward from wherever the hover left it. */
+  a.link:active { transform: translateY(0) scale(var(--press)); }
+}
+
+.link svg { width: 19px; height: 19px; }

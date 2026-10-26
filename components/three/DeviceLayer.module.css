@@ -1,0 +1,68 @@
+/* The persistent device layer (DeviceLayer.tsx). Laid over the PAGE, not
+   over the window: a zero-height anchor at the document's origin, from
+   which each seat is placed in document coordinates (deviceStore's
+   `sync`). Above the page and below the bar (z-index 900), and never a
+   target for the pointer: the hero underneath keeps the click and the
+   parallax.
+
+   It used to be fixed over the window, with each seat placed in viewport
+   coordinates every frame. That is a scroll-linked position, and it only
+   holds while the scroll itself is driven from the main thread, which is
+   true of the wheel (Lenis) and not of touch: a native touch scroll can
+   be composited off the main thread, so the seat's transform was always
+   a frame or more behind the slot it was supposed to sit on and the
+   device swam over its stage for the length of every flick. Anchored to
+   the document, the number written for a resting seat does not change as
+   the page scrolls, so the scroll is the compositor's business and a
+   late frame costs nothing. The slots that do move under the scroll are
+   the pinned heroes, and the pin is a wide-screen rule
+   (ProjectHero.module.css) — where Lenis is the one scrolling.
+
+   Nothing here clips: the layer has no box to speak of, and a seat
+   covers a slot that is already part of the page, so it adds nothing to
+   the scrollable area. Each resting seat is clipped to its own hero
+   stage instead, by the store, which is the clip that was ever visible. */
+.layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 0;
+  z-index: 800;
+  pointer-events: none;
+}
+
+/* While the first-load sequence has the page scaled into its device,
+   nothing here belongs on top of it. */
+:global(html[data-loading]) .layer { visibility: hidden; }
+
+/* A seat is placed and sized by the store's frame loop. It shows only
+   while it has a slot (data-on) or is travelling. Let go during a hero
+   hand-over (a neighbouring hero on the page being left, whose device is
+   not in the old page's photograph), it fades instead of blinking out;
+   anywhere else it goes at once, because the page it was on has already
+   been photographed with it.
+
+   The hand-over is keyed on data-hero-nav, the flag the live travel
+   actually sets (TransitionProvider, `heroNavigate`), and not on
+   data-vt="hero", which that path deletes before the first frame — so
+   these rules matched nothing and every seat let go mid-travel blinked
+   out in one frame. */
+.seat {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform;
+}
+.seat[data-on] {
+  opacity: 1;
+  visibility: visible;
+}
+:global(html[data-hero-nav]) .seat {
+  transition:
+    opacity 300ms var(--ease, ease),
+    visibility 0s linear 300ms;
+}
+:global(html[data-hero-nav]) .seat[data-on] { transition: none; }

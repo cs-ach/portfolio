@@ -1,0 +1,188 @@
+/* Computer Modern, the face Jake's template compiles to. CMU Serif's
+   "500" cut is TeX's regular weight, so it is declared as 400. */
+@font-face { font-family: "CMU Serif"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/cmu/cmu-serif-500-roman.woff2") format("woff2"); }
+@font-face { font-family: "CMU Serif"; font-style: italic; font-weight: 400; font-display: swap;
+  src: url("/fonts/cmu/cmu-serif-500-italic.woff2") format("woff2"); }
+@font-face { font-family: "CMU Serif"; font-style: normal; font-weight: 700; font-display: swap;
+  src: url("/fonts/cmu/cmu-serif-700-roman.woff2") format("woff2"); }
+@font-face { font-family: "CMU Serif"; font-style: italic; font-weight: 700; font-display: swap;
+  src: url("/fonts/cmu/cmu-serif-700-italic.woff2") format("woff2"); }
+
+.page {
+  padding: clamp(2.5rem, 6vw, 5rem) var(--margin) clamp(4rem, 8vw, 7rem);
+  display: grid;
+  justify-items: center;
+  gap: var(--s-5);
+}
+
+/* ── the bar above the sheet ─────────────────────────────── */
+
+.bar {
+  width: 100%;
+  max-width: 8.5in;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3) var(--s-4);
+  align-items: center;
+  justify-content: space-between;
+}
+.barTitle { margin: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+.dl { min-height: 42px; padding: 0 1.25rem; font-size: var(--t-small); }
+.glyph { width: 15px; height: 15px; transition: transform var(--d-fast) var(--ease); }
+@media (hover: hover) {
+  .dl:hover .glyph { transform: translateY(var(--nudge)); }
+}
+
+/* ── the sheet: Jake's template, measured in TeX points ─────
+   \documentclass[letterpaper,11pt], fullpage less half an inch a side. */
+
+.sheet {
+  width: 100%;
+  max-width: 8.5in;
+  min-height: 11in;
+  padding: 0.5in;
+  background: #fff;
+  color: #000;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 18px 40px -18px rgb(0 0 0 / 0.18);
+  font-family: "CMU Serif", "Latin Modern Roman", Georgia, serif;
+  font-size: 10.95pt;                     /* \normalsize */
+  line-height: 13.6pt;
+  font-kerning: normal;
+  font-synthesis: style small-caps;
+}
+.sheet a { color: inherit; }
+.sheet strong { font-weight: 700; }
+
+/* \textbf{\Huge \scshape Name} \\ \vspace{1pt} \small contact.
+   CM has no bold small caps, so TeX sets the name in the medium cut. */
+.head { text-align: center; }
+.name {
+  font-size: 24.88pt;
+  line-height: 30pt;
+  font-variant-caps: small-caps;
+  margin: 0;
+}
+.contact { font-size: 10pt; line-height: 12pt; margin: 1pt 0 0; }
+.contact a {
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-thickness: 0.4pt;
+  text-underline-offset: 2pt;
+  transition: text-underline-offset var(--d-fast) var(--ease);
+}
+@media (hover: hover) {
+  .contact a:hover { text-underline-offset: 3.5pt; }
+}
+.sep { padding: 0 4pt; }
+
+/* \titleformat{\section}{\scshape\raggedright\large}...[\titlerule].
+   The rule is a pseudo-element so it can draw in from the left once
+   its heading has been revealed. */
+.section {
+  position: relative;
+  font-family: inherit;
+  font-size: 12pt;
+  line-height: 14.5pt;
+  font-weight: 400;
+  font-variant-caps: small-caps;
+  letter-spacing: 0;
+  margin: 9pt 0 4pt;
+  padding-bottom: 1.5pt;
+}
+.section::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 0.4pt;
+  background: currentColor;
+  transform-origin: left center;
+}
+:global(html[data-js]) .section::after {
+  transform: scaleX(0);
+  transition: transform var(--d-slow) var(--ease) calc(var(--reveal-delay) + 120ms);
+}
+:global(html[data-js]) .section[data-shown="true"]::after { transform: none; }
+
+/* itemize[leftmargin=0.15in, label={}] holding tabular*{0.97\textwidth} */
+.list { margin-left: 0.15in; }
+.entry { width: 98.98%; }
+.entry + .entry { margin-top: 4pt; }
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12pt;
+}
+.row > :last-child { flex: 0 0 auto; text-align: right; }
+.top > :first-child { font-weight: 700; }
+.sub { font-style: italic; font-size: 10pt; line-height: 12pt; }
+.proj > :first-child { font-size: 10pt; }   /* \small#1 & #2 */
+.projLink {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 0.4pt;
+  text-underline-offset: 2pt;
+  transition: text-decoration-color var(--d-fast) var(--ease);
+}
+@media (hover: hover) {
+  .projLink:hover { text-decoration-color: currentColor; }
+}
+
+/* The level-two itemize: a \tiny bullet, \small items, \vspace{-2pt}. */
+.bullets {
+  list-style: none;
+  margin: 2pt 0 0;
+  padding-left: 2.2em;
+  font-size: 10pt;
+  line-height: 12pt;
+}
+.bullets li { position: relative; margin-bottom: 1pt; }
+.bullets li::before {
+  content: "";
+  position: absolute;
+  left: -9pt;
+  top: 5pt;
+  width: 2.6pt;
+  height: 2.6pt;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.skills { font-size: 10pt; line-height: 12pt; margin: 3pt 0 0 0.15in; }
+.skills p { margin: 0; }
+
+/* The reveal's lift is tuned for page sections; on lines of 10pt type
+   it reads as a jump, so the sheet rises a shorter distance. */
+:global(html[data-js]) .sheet [data-reveal]:not([data-shown="true"]) { transform: translateY(6px); }
+
+@media (max-width: 860px) {
+  .sheet { min-height: 0; padding: 26px 20px; }
+  .row { flex-wrap: wrap; column-gap: 12pt; row-gap: 0; }
+}
+
+/* Printing the page prints the sheet and nothing else, edge to edge on
+   Letter, so tools/resume-export.mjs can turn it into the PDF. */
+@page { size: letter; margin: 0; }
+
+@media print {
+  :global(body) * { visibility: hidden; }
+  .sheet, .sheet * { visibility: visible; }
+  .page { padding: 0; display: block; }
+  .bar { display: none; }
+  .sheet {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 8.5in;
+    max-width: none;
+    height: 11in;
+    overflow: hidden;
+    border: 0;
+    box-shadow: none;
+  }
+  .sheet [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .section::after { transform: none !important; transition: none !important; }
+}

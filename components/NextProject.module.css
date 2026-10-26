@@ -1,0 +1,5 @@
+/* Spacing only: the hero carries its own kicker and count. */
+
+.section {
+  margin-top: clamp(3rem, 8vw, 7rem);
+}

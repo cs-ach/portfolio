@@ -1,0 +1,94 @@
+.page { padding-top: clamp(2.5rem, 6vw, 5rem); }
+
+/* ── header ─────────────────────────────────────────────── */
+
+.head {
+  display: grid;
+  gap: var(--s-4);
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.title { margin: 0; }
+.lead { margin: 0; color: var(--muted); max-width: 40ch; }
+
+/* The index of experiments: a ruled strip, one cell each. Number, name,
+   project, the same three things the spec row on each bench opens with. */
+.index {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-top: var(--s-5);
+  border-top: 1px solid var(--ink);
+}
+
+.indexLink {
+  /* A full-width row travels far more pixels at a given scale than a
+     pill does, so the shared 0.97 reads as a lurch here. Rebinding the
+     token keeps the press on the same curve, just shallower. */
+  --press: 0.99;
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  grid-template-areas: "n name" ". project";
+  column-gap: var(--s-2);
+  row-gap: 2px;
+  height: 100%;
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--line-strong);
+}
+/* A whole cell is the target, so it carries .act: it presses as one and
+   the name turns accent on hover, as before. It jumps down the page with
+   no direction of its own, so no arrow. */
+@media (hover: hover) {
+  .indexLink:hover .indexName { color: var(--accent); }
+}
+
+.indexN { grid-area: n; font-size: var(--t-small); font-weight: 500; font-variant-numeric: tabular-nums; color: var(--faint); }
+.indexName { grid-area: name; font-size: 1.125rem; font-weight: 600; letter-spacing: -0.02em; transition: color var(--d-fast) var(--ease); }
+.indexProject { grid-area: project; font-size: var(--t-small); color: var(--muted); }
+
+@media (min-width: 560px) {
+  .index { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-6); }
+}
+
+/* Four across: the cells stack number over name over project and share
+   the top rule, like a row of labelled slots on a bench. */
+@media (min-width: 1000px) {
+  .index { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 0; }
+  .index li + li .indexLink { padding-left: var(--s-4); border-left: 1px solid var(--line-strong); }
+  .indexLink {
+    grid-template-columns: 1fr;
+    grid-template-areas: "n" "name" "project";
+    row-gap: var(--s-1);
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+/* ── benches ────────────────────────────────────────────── */
+
+.benches { position: relative; }
+
+/* The live panels are not meant to be as wide as the stage. The vault is
+   a document-width form; the request is a phone. Each is centred and
+   capped so a wide stage frames it instead of stretching it. */
+.vault { max-width: 54rem; margin-inline: auto; width: 100%; }
+.ledger { max-width: 30rem; margin-inline: auto; width: 100%; }
+
+.foot {
+  padding-block: clamp(2.5rem, 5vw, 4rem) clamp(4rem, 8vw, 7rem);
+  font-size: var(--t-small);
+  color: var(--muted);
+  border-top: 1px solid var(--line-strong);
+}
+
+/* .act and .act-nudge: a right arrow after the words, travelling on hover. */
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  vertical-align: bottom;
+  color: var(--accent);
+  text-underline-offset: 3px;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}

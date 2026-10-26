@@ -1,0 +1,219 @@
+/* Deliberately not the page colour. The site is #F5F5F7; this is
+   several steps darker, so the machine reads as an object in front of
+   a wall rather than as part of the page behind it.
+
+   It is not the first thing on screen — it cannot be, because it is
+   React's and the browser has painted a frame before React exists. The
+   same wall is painted by the document itself for that first frame
+   (app/globals.css, "the first frame"), from the token this uses, so
+   the two are one continuous ground and this one simply takes over. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: var(--loader-wall);
+}
+
+/* The 3D canvas. A stacking context of its own, above the page (9999)
+   and above the backdrop (9998), which is what lets the glass be a hole:
+   the canvas is transparent where the screen is, the page shows through
+   it from below, and every piece of hardware in the canvas covers the
+   page rather than the other way round. Hidden until the sequence
+   starts, and the scene fades it in and out itself, frame by frame. */
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* ── the screen ───────────────────────────────────────────────
+   Everything here is laid out inside the model's virtual display:
+   1280 px wide on the laptop, 402 on the phone. Viewport units would
+   measure the window instead of the glass, so sizes are container
+   query units, a hundredth of the display's own width. */
+
+.face {
+  width: 100%;
+  height: 100%;
+  container-type: inline-size;
+  position: relative;
+  display: grid;
+}
+
+.faceInner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 4.5cqw;
+}
+
+/* The four-corner mark, at a size that reads on a display rather
+   than on a page. */
+.mark {
+  display: grid;
+  place-items: center;
+  width: 11cqw;
+  aspect-ratio: 1;
+  isolation: isolate;
+}
+
+.blob {
+  grid-area: 1 / 1;
+  width: 54%;
+  height: 54%;
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+  will-change: transform, opacity;
+}
+
+.core {
+  grid-area: 1 / 1;
+  z-index: 1;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: var(--ink);
+  will-change: transform, opacity;
+}
+
+.screenName {
+  font-size: 3.5cqw;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+  text-align: center;
+}
+
+/* ── phone start-up ──────────────────────────────────────────
+   No machine here: the window itself is the phone, powering on. Black
+   over everything, the mark where a maker's logo sits, the name under
+   it, a bar filling, and then the black lifts.
+
+   Plain CSS animation on purpose. It runs on the compositor and needs
+   no script to keep time, so a main thread that is busy hydrating a
+   large page does not stall it, and there is nothing in it that can
+   fail to start. Sizes are viewport widths: it is only ever a phone held
+   upright, and the mark is the same fraction of the glass whatever the
+   phone. */
+.phoneBoot {
+  --m: 18vw;
+  position: fixed;
+  inset: 0;
+  min-height: 100lvh;
+  z-index: 10002;
+  background: #000;
+  color: var(--on-dark);
+  opacity: 1;
+  transition: opacity var(--pb-lift-dur, 0.6s) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* The page is live underneath from the moment the lift starts; the black
+   going is the whole hand-over, and it must not catch a tap meanwhile. */
+.phoneBoot[data-lift] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Centred on the window, exactly where the document paints its own disc
+   in the first frame (globals.css, "the first frame"). */
+.pbMark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--m);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+}
+
+/* The four corner blobs of the mark, flying in and landing behind the
+   core. They are the laptop's, in colours that read on black. */
+.pbBlob {
+  grid-area: 1 / 1;
+  width: 54%;
+  height: 54%;
+  border-radius: 50%;
+  opacity: 0;
+  animation: pbBlob 0.68s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+}
+
+@keyframes pbBlob {
+  0%   { transform: translate(var(--x), var(--y)) scale(0.4); opacity: 0; }
+  72%  { transform: translate(0, 0) scale(1.16); opacity: 1; }
+  100% { transform: translate(0, 0) scale(1); opacity: 1; }
+}
+
+/* On screen from the first frame at its final size, so the document's
+   black-with-a-dot and this are the same picture. It only breathes. */
+.pbCore {
+  grid-area: 1 / 1;
+  z-index: 1;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: var(--on-dark);
+  animation: pbCore 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+}
+
+@keyframes pbCore {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+
+.pbCaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% + var(--m) / 2 + 7vw);
+  display: grid;
+  justify-items: center;
+  gap: 6vw;
+}
+
+.pbName {
+  font-size: 7vw;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  opacity: 0;
+  animation: pbIn 0.46s cubic-bezier(0.16, 1, 0.3, 1) var(--pb-name, 0.7s) both;
+}
+
+@keyframes pbIn {
+  from { opacity: 0; transform: translateY(1.2vw); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* An Apple-style progress bar: a hairline track, a fill that runs left
+   to right once and stays. */
+.pbBar {
+  display: block;
+  width: 34vw;
+  height: max(3px, 0.8vw);
+  border-radius: 999px;
+  background: rgb(245 245 247 / 0.18);
+  overflow: hidden;
+  opacity: 0;
+  animation: pbIn 0.3s ease var(--pb-bar, 0.95s) both;
+}
+
+.pbFill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--on-dark);
+  transform-origin: left;
+  animation: pbFill var(--pb-bar-dur, 1s) cubic-bezier(0.45, 0, 0.25, 1) var(--pb-bar, 0.95s) both;
+}
+
+@keyframes pbFill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
