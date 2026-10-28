@@ -65,6 +65,9 @@ export type Entry = {
      coordinates and changes on every scroll even when the seat has not
      moved on the page at all. */
   at: { x: number; y: number } | null;
+  /* When the seat last had nowhere to be (no slot, no travel), for
+     `park`. Null while it is placed. */
+  idleSince: number | null;
   swing: MotionValue<number>;
   pose: MotionValue<number>;
   travel: Travel | null;
@@ -107,6 +110,7 @@ const ensure = (slug: string) => {
       node: null,
       rect: null,
       at: null,
+      idleSince: null,
       swing: motionValue(0),
       pose: motionValue(-1),
       travel: null,
@@ -373,6 +377,11 @@ const MAX_TRAVEL_STEP = 50;
 /* Give late destinations a short additional landing leg. */
 const MIN_LANDING_SECONDS = 0.18;
 
+/* How long a seat that has lost its slot keeps its place before it is
+   parked at the document's origin: long enough for the 300ms hand-over
+   fade (DeviceLayer.module.css) to finish where it started. */
+const PARK_AFTER = 400;
+
 const moved = (a: Rect, b: Rect) =>
   Math.abs(a.x - b.x) >= MOVED ||
   Math.abs(a.y - b.y) >= MOVED ||
@@ -583,7 +592,44 @@ export function sync() {
       }
     }
 
-    if (!rect) return;
+    if (!rect) {
+      /*
+       * Nowhere to be. A hidden seat still counts toward the scrollable
+       * area, so one left at its old page's coordinates (a slot three
+       * screens down the home page) would leave a blank scroll below the
+       * footer of a page that has no device. Once any let-go fade is
+       * over it is moved to the origin, which every page contains; the
+       * canvas is not touched, so nothing is torn down.
+       */
+      if (entry.idleSince === null) {
+        /*
+         * Wait out the fade only if there is one: without the hand-over
+         * flag the seat goes at once (DeviceLayer.module.css), so park
+         * it at once. Otherwise come back when the fade is over, without
+         * relying on the frame loop, which may not be running by then.
+         */
+        if (document.documentElement.hasAttribute("data-hero-nav")) {
+          entry.idleSince = now;
+
+          window.setTimeout(sync, PARK_AFTER + 20);
+        } else {
+          entry.idleSince = now - PARK_AFTER;
+        }
+      }
+
+      if (
+        now - entry.idleSince >= PARK_AFTER &&
+        (entry.at?.x !== 0 || entry.at?.y !== 0)
+      ) {
+        node.style.transform = "translate3d(0px, 0px, 0)";
+
+        entry.at = { x: 0, y: 0 };
+      }
+
+      return;
+    }
+
+    entry.idleSince = null;
 
     const previous = entry.rect;
 

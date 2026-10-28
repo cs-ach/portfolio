@@ -21,7 +21,18 @@
    Nothing here clips: the layer has no box to speak of, and a seat
    covers a slot that is already part of the page, so it adds nothing to
    the scrollable area. Each resting seat is clipped to its own hero
-   stage instead, by the store, which is the clip that was ever visible. */
+   stage instead, by the store, which is the clip that was ever visible.
+
+   That holds only while the seat has a slot. A hidden element is still
+   part of the scrollable overflow, so a seat left behind by a page that
+   had a device — still at the home page's third project, two screens
+   below the footer of /resume/ — kept the document scrolling into
+   blank space. The layer cannot clip it away (it would need the
+   document's height, which it does not have, and a travelling seat
+   crosses everything), so the store parks a seat that has no slot and
+   is not travelling at the origin once its let-go fade is over. The
+   canvas is only moved, never unmounted, so its WebGL context
+   survives, and the next attach writes its place again. */
 .layer {
   position: absolute;
   left: 0;
