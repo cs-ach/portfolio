@@ -17,8 +17,10 @@ export default function Contact() {
             Tell me what you&apos;re building.
           </h2>
           <p className={styles.lead}>
-            I&apos;m looking for full-stack work and happy to talk about
-            anything device-shaped. {PERSON.where}.
+            A web app, a phone app, or something with a screen and a
+            wire hanging out of it, I&apos;d like to hear about it. I&apos;m in
+            Malaysia, so if you write over lunch, the reply may land with
+            your morning coffee.
           </p>
 
           {/* The wipe is the shared .act-underline now rather than a

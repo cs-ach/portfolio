@@ -11,7 +11,7 @@ export default function Footer() {
         <div className={styles.cols}>
           <div className={styles.brand}>
             <p className={styles.name}>{PERSON.name}</p>
-            <p className={styles.role}>Full-stack Software Engineer, {PERSON.where}</p>
+            <p className={styles.role}>Software engineer in {PERSON.where}</p>
             <Social className={styles.social} />
           </div>
 
