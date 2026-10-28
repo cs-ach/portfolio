@@ -338,7 +338,19 @@ export default function Oneko() {
 
     /* ── behaviour ───────────────────────────────────────────────── */
 
+    /* A page that brings its own cat (the 404's runner game) marks
+       itself with `data-no-cat`, and this one steps aside while it is
+       mounted: two cats on one page is one too many. Checked per tick
+       rather than once, because the layout — and this cat — outlive a
+       client-side navigation in either direction. */
+    const stepAside = () => {
+      const away = document.querySelector("[data-no-cat]") !== null;
+      node.style.display = away ? "none" : "";
+      return away;
+    };
+
     const step = () => {
+      if (stepAside()) return;
       ticks++;
 
       const dx = (chasing ? mouseX : markX) - catX;
@@ -403,6 +415,7 @@ export default function Oneko() {
     /* Paint it once before the first frame, at its start — off the right
        edge, or behind the portrait and hidden — so there is no chance of
        a single frame at the origin. */
+    stepAside();
     if (behind) node.style.visibility = "hidden";
     draw("run-e-1", true);
     raf = requestAnimationFrame(frame);

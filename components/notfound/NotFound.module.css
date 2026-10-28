@@ -1,0 +1,44 @@
+/* The 404 (app/not-found.tsx) and /play. The message first and complete
+   on its own; the game sits beside it (or right under it on a phone) so
+   the whole stage is on screen without scrolling. */
+.page {
+  padding-top: clamp(1rem, 3vw, 2.5rem);
+  padding-bottom: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.head { display: grid; gap: 0.75rem; max-width: 44rem; }
+.eyebrow { margin: 0; font-family: var(--font-mono, ui-monospace, monospace); font-size: var(--t-mono); color: var(--accent); }
+.title { margin: 0; font-size: clamp(2rem, 1.2rem + 2.6vw, 3.5rem); }
+.lead { margin: 0; color: var(--muted); max-width: 40ch; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.25rem; }
+
+.game { display: grid; gap: 0.5rem; min-width: 0; }
+.note { margin: 0; font-size: var(--t-small); color: var(--faint); }
+
+/* The keyboard hint is no use on a phone, where the desk is simply tapped. */
+@media (hover: none) and (pointer: coarse) {
+  .keyNote { display: none; }
+}
+
+@media (min-width: 900px) {
+  .page {
+    grid-template-columns: minmax(0, 24rem) minmax(0, 1fr);
+    column-gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+}
+
+/* Short phones: the stage comes straight after the sentence and the
+   pills drop under it, so the game is on screen without scrolling. */
+@media (max-width: 899px) and (max-height: 700px) {
+  .page { gap: 0.6rem; padding-top: 0.5rem; }
+  .head { display: contents; }
+  .eyebrow, .title, .lead { order: 0; }
+  .game { order: 1; }
+  .actions { order: 2; margin-top: 0.25rem; }
+  .title { font-size: 1.75rem; }
+  .lead { font-size: var(--t-small); }
+}

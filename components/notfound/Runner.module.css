@@ -1,0 +1,70 @@
+/* The runner's stage (Runner.tsx).
+
+   Graph paper, like the lab's benches: the game is a small experiment
+   left out on the desk, not a feature. The canvas fills the width and
+   keeps its 16:5 shape, so a 320px phone gets the same game, smaller. */
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 5;
+  min-height: 150px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-inner);
+  background: var(--surface);
+  overflow: hidden;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.stage:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+/* The words over the canvas: how to start, and how it went. Text, not
+   paint, so it is selectable, scales with the user's font size and is
+   in the accessibility tree. */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: var(--s-2, 0.5rem);
+  text-align: center;
+  padding: 1rem;
+  pointer-events: none;
+}
+.overlayTitle { margin: 0; font-weight: 500; font-size: var(--t-body); color: var(--ink); }
+.overlayHint  { margin: 0; font-size: var(--t-small); color: var(--muted); }
+
+/* The prompt's two wordings: the keyboard line by default, the touch
+   line only on a screen with no hover and a coarse pointer (a phone). */
+.hintTouch { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  .hintTouch { display: inline; }
+  .hintKeys { display: none; }
+}
+
+.score {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.85rem;
+  margin: 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: var(--t-mono);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.sr {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

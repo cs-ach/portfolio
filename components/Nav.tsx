@@ -36,7 +36,22 @@ export default function Nav() {
   return (
     <header className={styles.bar} data-lifted={lifted || undefined} data-site-nav>
       <div className={`wrap ${styles.inner}`}>
-        <Link href="/" className={`act ${styles.wordmark}`}>{PERSON.name}</Link>
+        <div className={styles.brand}>
+          <Link href="/" className={`act ${styles.wordmark}`}>{PERSON.name}</Link>
+          {/* The way to the game: the cat's own idle frame, small and
+              wordless, and beside the name rather than among the links:
+              the phone's link row has no room left for even an icon. The
+              name is in the label; the tooltip says it to a pointer. */}
+          <Link
+            href="/play/"
+            className={`act ${styles.link} ${styles.play}`}
+            aria-label="Play a little game"
+            title="Play a little game"
+            aria-current={pathname.startsWith("/play") ? "page" : undefined}
+          >
+            <span className={styles.playCat} aria-hidden="true" />
+          </Link>
+        </div>
 
         <nav aria-label="Primary" className={styles.nav}>
           {LINKS.map((l) => (

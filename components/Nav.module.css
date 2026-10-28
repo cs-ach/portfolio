@@ -80,3 +80,30 @@
   .wordmark { flex: 1 1 100%; text-align: center; }
   .nav { justify-content: center; }
 }
+
+/* The cat link (to /play). One idle cell of oneko.gif (32x32 at
+   [3,3]), shown at 24px; the sheet is 256x128, so the background is
+   scaled by 0.75 to match. Faded like the text links and full ink on
+   hover or when current. */
+.play { display: inline-flex; align-items: center; }
+.playCat {
+  width: 24px;
+  height: 24px;
+  background: url("/oneko/oneko.gif") no-repeat -72px -72px / 192px 96px;
+  image-rendering: pixelated;
+  opacity: 0.6;
+  transition: opacity var(--d-fast) var(--ease);
+}
+.play[aria-current="page"] .playCat { opacity: 1; }
+.play:focus-visible .playCat { opacity: 1; }
+@media (hover: hover) {
+  .play:hover .playCat { opacity: 1; }
+}
+
+/* Name and cat travel together, so on a phone they share the top row
+   and the link row below keeps its width. */
+.brand { display: flex; align-items: center; gap: var(--s-2); }
+@media (max-width: 620px) {
+  .brand { flex: 1 1 100%; justify-content: center; }
+  .brand .wordmark { flex: none; }
+}
