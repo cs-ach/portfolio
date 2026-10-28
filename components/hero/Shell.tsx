@@ -190,7 +190,7 @@ export default function Shell() {
           data-ui
           data-dock={dockRight ? "right" : "left"}
           role="group"
-          aria-label="The desk-companion shell at its real 800 by 480: a dock of plugins, a status bar carrying the host link and the clock, and a grid of plugin widgets."
+          aria-label="The desk-companion shell at 800 by 480: a dock of plugins, a status bar carrying the host link and the clock, and a grid of plugin widgets."
         >
           <div className={styles.ground} style={{ background: GROUNDS[ground] }} />
 

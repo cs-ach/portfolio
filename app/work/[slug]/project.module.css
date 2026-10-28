@@ -87,7 +87,7 @@
   padding: var(--pad);
 }
 
-/* The frame's own horizontal scroll, so a real-size figure never
+/* The frame's own horizontal scroll, so a wide figure never
    widens the page. overscroll-behavior keeps a sideways swipe at the
    end of the frame from turning into a browser back gesture. */
 .scroller {
@@ -98,14 +98,13 @@
 }
 .scroller:focus-visible { outline-offset: 4px; }
 
-/* Real size per figure. The Shell scales itself to its container's
-   width, so pinning the container at 800px is what holds it at the
-   panel's true resolution. The app fragments are fluid layouts with
+/* Size per figure. The Shell scales itself to its container's width, so
+   it fills the frame and is capped at the panel's true 800px by the
+   figure's max-width. The app fragments are fluid layouts with
    their own container queries; they get a sensible reading width and
    are left to fit. */
 .figure[data-kind="shell"] { max-width: calc(800px + var(--pad) * 2); }
 .figInner { width: 100%; }
-.figure[data-kind="shell"] .figInner { width: 800px; }
 
 .caption {
   margin: var(--s-4) 0 0;

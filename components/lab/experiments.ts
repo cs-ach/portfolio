@@ -43,8 +43,8 @@ export const EXPERIMENTS: Experiment[] = [
     name: "The desk screen",
     slug: "desk-companion",
     project: projectName("desk-companion"),
-    line: "The Raspberry Pi interface at its real 800 by 480, with a ticking clock.",
-    format: "800 × 480, natural size",
+    line: "The Raspberry Pi's 800 by 480 interface, with a ticking clock.",
+    format: "800 × 480, scaled to fit",
     shows:
       "The interface the Rust application draws on the Pi's panel: a dock of plugins down the left, a status bar along the top, and a grid of widgets that becomes a full page when you open one.",
     tryIt:

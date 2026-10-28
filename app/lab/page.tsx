@@ -9,7 +9,6 @@ import Ledger from "@/components/figures/Ledger";
 import LiveLink from "@/components/LiveLink";
 import Bench from "@/components/lab/Bench";
 import LabRail from "@/components/lab/LabRail";
-import ScrollFrame from "@/components/lab/ScrollFrame";
 import { EXPERIMENTS } from "@/components/lab/experiments";
 import styles from "./lab.module.css";
 
@@ -78,11 +77,9 @@ export default function Lab() {
         <LabRail items={EXPERIMENTS} />
 
         <Bench x={DESK}>
-          <ScrollFrame width={800} label="The desk screen, 800 by 480 pixels">
-            <div className="ui-dark">
-              <Shell />
-            </div>
-          </ScrollFrame>
+          <div className={`ui-dark ${styles.desk}`}>
+            <Shell />
+          </div>
         </Bench>
 
         <Bench x={LINK} tone="dark">

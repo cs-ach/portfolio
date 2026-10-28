@@ -74,6 +74,18 @@
 .vault { max-width: 54rem; margin-inline: auto; width: 100%; }
 .ledger { max-width: 30rem; margin-inline: auto; width: 100%; }
 
+/* The shell draws its own rounded screen. The theme's ground would only
+   show as a square box around it, so the bench keeps no fill of its own. */
+/* The screen is the panel's 800 by 480 at most. The Shell scales itself to
+   its container's width, so a narrower column just gets a smaller, whole
+   screen rather than a cropped or scrolling one. */
+.desk {
+  background: transparent;
+  width: 100%;
+  max-width: 800px;
+  margin-inline: auto;
+}
+
 .foot {
   padding-block: clamp(2.5rem, 5vw, 4rem) clamp(4rem, 8vw, 7rem);
   font-size: var(--t-small);

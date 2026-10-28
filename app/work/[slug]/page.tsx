@@ -55,7 +55,7 @@ const delay = (i: number) => ({ "--reveal-delay": `${i * 70}ms` }) as CSSPropert
 
    After it the page is a sequence of numbered chapters on the light
    ground, each opened by a hairline: what the project refuses to do and
-   the facts about it, the interface at its real size, how it works,
+   the facts about it, the interface, how it works,
    what it does when it fails, the decisions behind it. Most of the
    width is whitespace on purpose; the only strong colour on the page is
    the dark interface itself. It ends on the next project's hero, so
@@ -100,10 +100,10 @@ export default async function ProjectPage({
           full-bleed and lit like the hero's plinth, in the project's own
           tones, so the interface sits on the project's own ground.
 
-          The figure is shown at its real size. The Shell is the device's
-          800×480 panel and only reads as that panel at 800 pixels, so
-          on a narrower screen the frame scrolls sideways inside itself
-          rather than shrinking the interface or widening the page. The
+          The figure is shown at up to the panel's real 800×480. The Shell
+          scales itself to its container's width, so on a narrower screen
+          it shrinks whole to fit rather than scrolling. Any other figure
+          that is wider than its frame scrolls sideways inside it; the
           scroller is focusable so a keyboard can scroll it too, and is
           labelled by the caption. */}
       <section
