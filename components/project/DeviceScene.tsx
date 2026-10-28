@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Timer, type Group } from "three";
+import { Timer, Vector3, type Group, type PerspectiveCamera } from "three";
 import type { MotionValue } from "motion/react";
 import { IPad, IPhone, Laptop, MockupCanvas } from "react-3d-mockups";
 import { floatPose, randomFloatPhase } from "react-3d-mockups/core";
@@ -108,6 +108,39 @@ const MAX_STEP = 0.1;
 const HEADROOM = 1.12;
 const FOV = (2 * Math.atan(Math.tan((40 / 2) * (Math.PI / 180)) * HEADROOM) * 180) / Math.PI;
 
+/* The scale of the world, chosen so the screens sit where WebKit can draw
+   them.
+
+   A live screen is DOM laid in the same 3D space as the model, and the
+   library places it with CSS in which one world unit is one PIXEL. The
+   models are about two units across, so with the camera six or seven
+   units out the glass would be six or seven pixels from the eye of a
+   CSS perspective of some five hundred: a 1.8px layer magnified seventy
+   times. Blink and Gecko take that in their stride. WebKit paints a
+   layer at its own scale and carries it by the projection, and with the
+   eye that close to the plane it draws the screen as a speck in the
+   middle of the canvas (Playwright's WebKit), or flat and shifted off
+   the bezel (iOS Safari), never in the place the WebGL glass is.
+
+   So the world is made bigger, by the one factor the picture cannot
+   show. The camera is moved out along the same line, and the model,
+   its float and the clip planes grow with it, so the WebGL image is the
+   same to the pixel. The factor is whatever puts the camera exactly one
+   CSS perspective away from the model (see `worldScale`), which makes
+   the screen's CSS magnification one: the layer is laid at the size it
+   is drawn at, and there is no extreme projection left for an engine to
+   get wrong. Playwright's WebKit, which paints 3D transforms without any
+   perspective at all, then lands within a pixel or two of the glass too,
+   because the perspective it ignores is a factor of one. Everything in
+   the scene that is a length in world units goes through the scale. */
+const scratch = new Vector3();
+function worldScale(camera: [number, number, number], heightPx: number) {
+  /* The CSS perspective the library derives from the projection: the
+     canvas's half height over the tangent of half the field of view. */
+  const perspectivePx = heightPx / 2 / Math.tan((FOV * DEG) / 2);
+  return perspectivePx / scratch.set(...camera).length();
+}
+
 const IPAD_PROPS = { variant: "ipad11", orientation: "landscape" } as const;
 const IPHONE_PROPS = { variant: "pro" } as const;
 const LAPTOP_PROPS = { variant: "air13" } as const;
@@ -151,6 +184,7 @@ export default function DeviceScene({ kind, screen, label, progress, sx, sy, set
         swing={swing}
         float={float}
         intensity={stage.intensity}
+        camera={stage.camera}
         onReady={() => {
           setDrawn(true);
           onReady();
@@ -251,6 +285,7 @@ function Rig({
   swing,
   float,
   intensity,
+  camera,
   onReady,
   children,
 }: {
@@ -262,10 +297,13 @@ function Rig({
   swing: MotionValue<number>;
   float: boolean;
   intensity: number;
+  /* The camera in the models' own units, before the world is scaled. */
+  camera: [number, number, number];
   onReady: () => void;
   children: ReactNode;
 }) {
   const ref = useRef<Group>(null);
+  const world = useRef(0);
   const invalidate = useThree((s) => s.invalidate);
   const [phase] = useState(randomFloatPhase);
   const frames = useRef(0);
@@ -305,9 +343,22 @@ function Rig({
     return () => off.forEach((f) => f());
   }, [progress, sx, sy, settled, pose, swing, invalidate]);
 
-  useFrame(() => {
+  useFrame(({ camera: view, size }) => {
     const g = ref.current;
     if (!g) return;
+    /* The world's scale for this canvas (see worldScale). The canvas's
+       size is the only thing it depends on, so the camera and the clip
+       planes are only touched when it changes. */
+    const W = worldScale(camera, size.height);
+    if (W !== world.current) {
+      world.current = W;
+      const cam = view as PerspectiveCamera;
+      cam.position.set(camera[0] * W, camera[1] * W, camera[2] * W);
+      cam.near = 0.1 * W;
+      cam.far = 1000 * W;
+      cam.updateProjectionMatrix();
+      cam.updateMatrixWorld();
+    }
     /* Once per drawn frame, before anything reads the time. */
     timer.update();
     floatTime.current += Math.min(timer.getDelta(), MAX_STEP);
@@ -333,8 +384,8 @@ function Rig({
     g.rotation.x =
       (AWAY_X - (AWAY_X - REST_X) * p) * DEG + sy.get() * DEG * s + (f ? f.rotationX * s : 0) + SWING_X * DEG * w;
     g.rotation.z = f ? f.rotationZ * s : 0;
-    g.position.y = f ? f.positionY * s : 0;
-    g.scale.setScalar(0.9 + 0.1 * p);
+    g.position.y = f ? f.positionY * s * W : 0;
+    g.scale.setScalar((0.9 + 0.1 * p) * W);
     if (f) invalidate();
 
     /* Tell the stage once a few frames are on the glass: by then the
