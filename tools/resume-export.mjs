@@ -2,7 +2,7 @@
    RESUME in lib/content.ts. Rerun it whenever the resume content changes.
 
      public/resume.tex  Jake Gutierrez's resume template (MIT), filled in
-     public/resume.pdf  the /resume/ sheet printed to Letter
+     public/resume.pdf  the /resume/ sheet printed to A4
 
    The PDF is printed from a running site, so start one first (the dev
    server, or the static export on :4311) and point BASE at it.
@@ -40,7 +40,7 @@ const tex = String.raw`%-------------------------
 % License : MIT
 %------------------------
 
-\documentclass[letterpaper,11pt]{article}
+\documentclass[a4paper,11pt]{article}
 
 \usepackage{latexsym}
 \usepackage[empty]{fullpage}

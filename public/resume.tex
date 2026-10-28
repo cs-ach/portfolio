@@ -5,7 +5,7 @@
 % License : MIT
 %------------------------
 
-\documentclass[letterpaper,11pt]{article}
+\documentclass[a4paper,11pt]{article}
 
 \usepackage{latexsym}
 \usepackage[empty]{fullpage}
@@ -118,13 +118,14 @@
       {Software Engineer Intern}{Apr. 2026 -- Dec. 2026 (Expected)}
       {SeeSharp Solutions Sdn Bhd}{Malaysia}
       \resumeItemListStart
-        \resumeItem{Delivered features across \textbf{five production repositories} spanning .NET/ABP web platforms, a Next.js dashboard, and a Gatling performance-testing suite, authoring \textbf{400+ commits}.}
-        \resumeItem{Built multi-tenant infrastructure for a \textbf{WhatsApp Business SaaS}, implementing per-tenant connection strings, Meta Cloud API template quality tracking, and consent-based opt-in/opt-out to satisfy Meta messaging compliance requirements.}
-        \resumeItem{Implemented sign-in, sign-out, and redirect flows for an \textbf{authentication consolidation}, moving three separate applications onto a single commercial site with JWT auth, automatic logout on token expiry, and cross-app unauthenticated redirects.}
-        \resumeItem{Hardened campaign and automation services with \textbf{server-side authorization guards} after identifying that inactive message templates were rejected only in the client, allowing the check to be bypassed via direct API calls.}
-        \resumeItem{Reduced a recipient-resolution hot path from an \textbf{N+1 query per recipient to a single batched fetch}, and paginated an unbounded conversation endpoint that had been loading entire tenant histories per request.}
-        \resumeItem{Co-built an internal \textbf{desktop test-automation platform} (Electron, .NET, PostgreSQL), integrating Playwright and Gatling behind a single interface with in-app script recording, reusable nested preconditions, and a CI layer with API-key authentication and remote headless execution.}
-        \resumeItem{Designed and executed \textbf{load, stress, and breakpoint testing} for a high-traffic client web platform across test, staging, and production environments, fixing \textbf{user-ID collisions} across concurrent virtual users that had been silently corrupting results.}
+        \resumeItem{Delivered features across \textbf{seven repositories} (.NET/ABP, Next.js dashboards, native iOS Swift/Android Kotlin, Gatling suite), authoring \textbf{500+ commits}.}
+        \resumeItem{Built multi-tenant infrastructure for a \textbf{WhatsApp Business SaaS}: per-tenant connection strings, Meta Cloud API template quality tracking, consent opt-in/opt-out, and \textbf{Stripe add-on billing} with prorated rates.}
+        \resumeItem{Implemented sign-in, sign-out, and redirect flows for an \textbf{authentication consolidation} of three apps onto one commercial site, with JWT, auto-logout on token expiry, and cross-app redirects.}
+        \resumeItem{Added \textbf{server-side authorization guards} to campaign and automation services after finding inactive templates were rejected only client-side, bypassable via direct API calls.}
+        \resumeItem{Cut a recipient-resolution hot path from an \textbf{N+1 query per recipient to a single batched fetch}, and paginated an unbounded conversation endpoint that loaded entire tenant histories.}
+        \resumeItem{Co-built an internal \textbf{desktop test-automation platform} (Electron, .NET, PostgreSQL) unifying Playwright and Gatling, with script recording, nested preconditions, and a CI layer with API-key auth and remote headless execution.}
+        \resumeItem{Ran \textbf{load, stress, and breakpoint testing} of a high-traffic client web platform across test, staging, and production, fixing \textbf{user-ID collisions} across concurrent virtual users that silently corrupted results.}
+        \resumeItem{Shipped an \textbf{invoice dashboard} (Next.js, TypeScript) with queue-based WhatsApp reminders, plus booking, membership, and shop features for a consumer app's native \textbf{iOS and Android} clients.}
       \resumeItemListEnd
 
   \resumeSubHeadingListEnd
@@ -145,7 +146,7 @@
           {\textbf{Neobank Prototype} $|$ \emph{Node.js, Express, WebCrypto}}{Dec. 2025}
           \resumeItemListStart
             \resumeItem{Applied the zero-trust session and cryptography layers to a \textbf{digital banking prototype}, placing account and transaction endpoints behind the same continuous-verification model.}
-            \resumeItem{Structured the backend into route, service, and infrastructure layers with centralised logging and encrypted-at-rest storage for account records.}
+            \resumeItem{Layered the backend (route, service, infrastructure) with centralised logging and encrypted-at-rest account records.}
           \resumeItemListEnd
     \resumeSubHeadingListEnd
 
@@ -154,11 +155,11 @@
 \section{Technical Skills}
  \begin{itemize}[leftmargin=0.15in, label={}]
     \small{\item{
-     \textbf{Languages}{: C\#, TypeScript, JavaScript, Java, Python, SQL, HTML/CSS} \\
+     \textbf{Languages}{: C\#, TypeScript, JavaScript, Java, Swift, Kotlin, Python, SQL, HTML/CSS} \\
      \textbf{Frameworks}{: .NET, ABP Framework, React, Next.js, Node.js, Electron, Express, Hangfire} \\
      \textbf{Security}{: Zero Trust architecture, AES-256-GCM, RSA-OAEP, PBKDF2, HMAC, JWT, OAuth/OpenIddict, threat modelling} \\
      \textbf{Testing}{: Playwright, Gatling, load, stress \& breakpoint testing} \\
-     \textbf{Tools \& Databases}{: Git, Docker, GitHub Actions, Postman, Maven, PostgreSQL, SQLite}
+     \textbf{Tools \& Databases}{: Git, Docker, GitHub Actions, Postman, Maven, PostgreSQL, SQLite, Stripe}
     }}
  \end{itemize}
 

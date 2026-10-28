@@ -12,6 +12,10 @@
 .page {
   padding: clamp(2.5rem, 6vw, 5rem) var(--margin) clamp(4rem, 8vw, 7rem);
   display: grid;
+  /* An auto column is never narrower than its widest min-content, so one
+     long unbreakable run inside the sheet stretched the whole page past the
+     screen. minmax(0, 1fr) lets the column shrink to the viewport. */
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   gap: var(--s-5);
 }
@@ -20,7 +24,7 @@
 
 .bar {
   width: 100%;
-  max-width: 8.5in;
+  max-width: 210mm;
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-3) var(--s-4);
@@ -29,19 +33,19 @@
 }
 .barTitle { margin: 0; }
 .actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
-.dl { min-height: 42px; padding: 0 1.25rem; font-size: var(--t-small); }
+.dl { min-height: 42px; padding: 0 1.25rem; font-size: var(--t-small); white-space: nowrap; }
 .glyph { width: 15px; height: 15px; transition: transform var(--d-fast) var(--ease); }
 @media (hover: hover) {
   .dl:hover .glyph { transform: translateY(var(--nudge)); }
 }
 
 /* ── the sheet: Jake's template, measured in TeX points ─────
-   \documentclass[letterpaper,11pt], fullpage less half an inch a side. */
+   \documentclass[a4paper,11pt], fullpage less half an inch a side. */
 
 .sheet {
   width: 100%;
-  max-width: 8.5in;
-  min-height: 11in;
+  max-width: 210mm;
+  min-height: 297mm;
   padding: 0.5in;
   background: #fff;
   color: #000;
@@ -164,21 +168,40 @@
   .row { flex-wrap: wrap; column-gap: 12pt; row-gap: 0; }
 }
 
+/* On a phone the dates and places drop under their titles instead of
+   squeezing beside them, the contact line may break between its links,
+   and the download pills share the width. */
+@media (max-width: 520px) {
+  .sheet { padding: 20px 16px; overflow-wrap: anywhere; }
+  .name { font-size: 20pt; line-height: 24pt; }
+  .contact { display: flex; flex-wrap: wrap; justify-content: center; row-gap: 2pt; }
+  .row > :last-child { flex: 0 1 auto; text-align: left; }
+  .list { margin-left: 0; }
+  .entry { width: 100%; }
+  .actions { width: 100%; }
+  .dl { flex: 1 1 10rem; justify-content: center; }
+}
+
 /* Printing the page prints the sheet and nothing else, edge to edge on
-   Letter, so tools/resume-export.mjs can turn it into the PDF. */
-@page { size: letter; margin: 0; }
+   A4, so tools/resume-export.mjs can turn it into the PDF. */
+@page { size: A4; margin: 0; }
 
 @media print {
   :global(body) * { visibility: hidden; }
+  /* visibility: hidden still reserves each element's box, so anything after
+     the sheet would keep the printout long enough to spill onto more pages.
+     Removing the footer and contact section from print avoids that. */
+  :global(footer) { display: none; }
+  :global(#contact) { display: none; }
   .sheet, .sheet * { visibility: visible; }
   .page { padding: 0; display: block; }
   .bar { display: none; }
   .sheet {
     position: absolute;
     inset: 0 auto auto 0;
-    width: 8.5in;
+    width: 210mm;
     max-width: none;
-    height: 11in;
+    height: 297mm;
     overflow: hidden;
     border: 0;
     box-shadow: none;

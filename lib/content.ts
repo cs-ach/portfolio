@@ -20,7 +20,7 @@ export const PERSON = {
   githubLabel: "github.com/cs-ach",
   linkedin: "https://www.linkedin.com/in/adwin-chee-42427b354/",
   linkedinLabel: "linkedin.com/in/adwin-chee",
-  where: "Malaysia, GMT+8",
+  where: "Malaysia",
 };
 
 /* One plain sentence per project about a decision I made in it. These are
@@ -132,7 +132,7 @@ export const PROJECTS: Project[] = [
     tone: { stage: "#E8E3DB", stageAlt: "#DCD5CA" },
     roles: ["Systems design", "Rust runtime", "Embedded Linux"],
     figureCaption:
-      "A web recreation of the device's interface at its real size, 800 by 480: the dock along the bottom, the status bar and the widget grid.",
+      "A web recreation of the device's interface at 800 by 480: the dock along the bottom, the status bar and the widget grid.",
     states: [
       {
         label: "Plugin running",
@@ -357,7 +357,7 @@ export const RECORD = [
   { name: "Dean's List", value: "April 2025" },
   { name: "Dean's List", value: "September 2025" },
   { name: "AWS Cloud Practitioner Essentials", value: "Certificate" },
-  { name: "Cisco Networking Academy", value: "Packet Tracer" },
+  { name: "Cisco Networking Academy: Packet Tracer", value: "Certificate" },
 ];
 
 /* ── the stack list ───────────────────────────────────────────────────── */
@@ -418,13 +418,14 @@ export const RESUME = {
     org: "SeeSharp Solutions Sdn Bhd",
     where: "Malaysia",
     bullets: [
-      "Delivered features across **five production repositories** spanning .NET/ABP web platforms, a Next.js dashboard, and a Gatling performance-testing suite, authoring **400+ commits**.",
-      "Built multi-tenant infrastructure for a **WhatsApp Business SaaS**, implementing per-tenant connection strings, Meta Cloud API template quality tracking, and consent-based opt-in/opt-out to satisfy Meta messaging compliance requirements.",
-      "Implemented sign-in, sign-out, and redirect flows for an **authentication consolidation**, moving three separate applications onto a single commercial site with JWT auth, automatic logout on token expiry, and cross-app unauthenticated redirects.",
-      "Hardened campaign and automation services with **server-side authorization guards** after identifying that inactive message templates were rejected only in the client, allowing the check to be bypassed via direct API calls.",
-      "Reduced a recipient-resolution hot path from an **N+1 query per recipient to a single batched fetch**, and paginated an unbounded conversation endpoint that had been loading entire tenant histories per request.",
-      "Co-built an internal **desktop test-automation platform** (Electron, .NET, PostgreSQL), integrating Playwright and Gatling behind a single interface with in-app script recording, reusable nested preconditions, and a CI layer with API-key authentication and remote headless execution.",
-      "Designed and executed **load, stress, and breakpoint testing** for a high-traffic client web platform across test, staging, and production environments, fixing **user-ID collisions** across concurrent virtual users that had been silently corrupting results.",
+      "Delivered features across **seven repositories** (.NET/ABP, Next.js dashboards, native iOS Swift/Android Kotlin, Gatling suite), authoring **500+ commits**.",
+      "Built multi-tenant infrastructure for a **WhatsApp Business SaaS**: per-tenant connection strings, Meta Cloud API template quality tracking, consent opt-in/opt-out, and **Stripe add-on billing** with prorated rates.",
+      "Implemented sign-in, sign-out, and redirect flows for an **authentication consolidation** of three apps onto one commercial site, with JWT, auto-logout on token expiry, and cross-app redirects.",
+      "Added **server-side authorization guards** to campaign and automation services after finding inactive templates were rejected only client-side, bypassable via direct API calls.",
+      "Cut a recipient-resolution hot path from an **N+1 query per recipient to a single batched fetch**, and paginated an unbounded conversation endpoint that loaded entire tenant histories.",
+      "Co-built an internal **desktop test-automation platform** (Electron, .NET, PostgreSQL) unifying Playwright and Gatling, with script recording, nested preconditions, and a CI layer with API-key auth and remote headless execution.",
+      "Ran **load, stress, and breakpoint testing** of a high-traffic client web platform across test, staging, and production, fixing **user-ID collisions** across concurrent virtual users that silently corrupted results.",
+      "Shipped an **invoice dashboard** (Next.js, TypeScript) with queue-based WhatsApp reminders, plus booking, membership, and shop features for a consumer app\u2019s native **iOS and Android** clients.",
     ],
   },
   projects: [
@@ -447,15 +448,15 @@ export const RESUME = {
       period: "Dec. 2025",
       bullets: [
         "Applied the zero-trust session and cryptography layers to a **digital banking prototype**, placing account and transaction endpoints behind the same continuous-verification model.",
-        "Structured the backend into route, service, and infrastructure layers with centralised logging and encrypted-at-rest storage for account records.",
+        "Layered the backend (route, service, infrastructure) with centralised logging and encrypted-at-rest account records.",
       ],
     },
   ],
   skills: [
-    { label: "Languages", items: "C#, TypeScript, JavaScript, Java, Python, SQL, HTML/CSS" },
+    { label: "Languages", items: "C#, TypeScript, JavaScript, Java, Swift, Kotlin, Python, SQL, HTML/CSS" },
     { label: "Frameworks", items: ".NET, ABP Framework, React, Next.js, Node.js, Electron, Express, Hangfire" },
     { label: "Security", items: "Zero Trust architecture, AES-256-GCM, RSA-OAEP, PBKDF2, HMAC, JWT, OAuth/OpenIddict, threat modelling" },
     { label: "Testing", items: "Playwright, Gatling, load, stress & breakpoint testing" },
-    { label: "Tools & Databases", items: "Git, Docker, GitHub Actions, Postman, Maven, PostgreSQL, SQLite" },
+    { label: "Tools & Databases", items: "Git, Docker, GitHub Actions, Postman, Maven, PostgreSQL, SQLite, Stripe" },
   ],
 };

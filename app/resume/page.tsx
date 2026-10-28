@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { openGraph } from "@/lib/site";
 import { PERSON, RESUME } from "@/lib/content";
+import Contact from "@/components/Contact";
 import styles from "./resume.module.css";
 
 export const metadata: Metadata = {
@@ -43,96 +44,99 @@ export default function Resume() {
   });
 
   return (
-    <article className={styles.page}>
-      <div className={styles.bar} {...reveal()}>
-        <h1 className={`label ${styles.barTitle}`}>Resume</h1>
-        <div className={styles.actions}>
-          <a href="/resume.tex" download={`${FILE}.tex`} className={`pill pill-ghost ${styles.dl}`}>
-            <DownloadGlyph />
-            Download .tex
-          </a>
-          <a href="/resume.pdf" download={`${FILE}.pdf`} className={`pill pill-solid ${styles.dl}`}>
-            <DownloadGlyph />
-            Download PDF
-          </a>
+    <>
+      <article className={styles.page}>
+        <div className={styles.bar} {...reveal()}>
+          <h1 className={`label ${styles.barTitle}`}>Resume</h1>
+          <div className={styles.actions}>
+            <a href="/resume.tex" download={`${FILE}.tex`} className={`pill pill-ghost ${styles.dl}`}>
+              <DownloadGlyph />
+              Download .tex
+            </a>
+            <a href="/resume.pdf" download={`${FILE}.pdf`} className={`pill pill-solid ${styles.dl}`}>
+              <DownloadGlyph />
+              Download PDF
+            </a>
+          </div>
         </div>
-      </div>
 
-      <div className={styles.sheet}>
+        <div className={styles.sheet}>
 
-        <header className={styles.head}>
-          <p className={styles.name} {...reveal()}>{PERSON.name}</p>
-          <p className={styles.contact} {...reveal()}>
-            <a href={`mailto:${PERSON.email}`}>{PERSON.email}</a>
-            <span className={styles.sep}>|</span>
-            <a href={PERSON.linkedin} rel="noreferrer">{PERSON.linkedinLabel}</a>
-            <span className={styles.sep}>|</span>
-            <a href={PERSON.github} rel="noreferrer">{PERSON.githubLabel}</a>
-          </p>
-        </header>
+          <header className={styles.head}>
+            <p className={styles.name} {...reveal()}>{PERSON.name}</p>
+            <p className={styles.contact} {...reveal()}>
+              <a href={`mailto:${PERSON.email}`}>{PERSON.email}</a>
+              <span className={styles.sep}>|</span>
+              <a href={PERSON.linkedin} rel="noreferrer">{PERSON.linkedinLabel}</a>
+              <span className={styles.sep}>|</span>
+              <a href={PERSON.github} rel="noreferrer">{PERSON.githubLabel}</a>
+            </p>
+          </header>
 
-        <section>
-          <h2 className={styles.section} {...reveal()}>Education</h2>
-          <div className={styles.list}>
-            <div className={styles.entry}>
-              <div className={`${styles.row} ${styles.top}`} {...reveal()}>
-                <span>{edu.school}</span><span>{edu.where}</span>
-              </div>
-              <div className={`${styles.row} ${styles.sub}`} {...reveal()}>
-                <span>{edu.degree}</span><span>{edu.period}</span>
+          <section>
+            <h2 className={styles.section} {...reveal()}>Education</h2>
+            <div className={styles.list}>
+              <div className={styles.entry}>
+                <div className={`${styles.row} ${styles.top}`} {...reveal()}>
+                  <span>{edu.school}</span><span>{edu.where}</span>
+                </div>
+                <div className={`${styles.row} ${styles.sub}`} {...reveal()}>
+                  <span>{edu.degree}</span><span>{edu.period}</span>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <section>
-          <h2 className={styles.section} {...reveal()}>Experience</h2>
-          <div className={styles.list}>
-            <div className={styles.entry}>
-              <div className={`${styles.row} ${styles.top}`} {...reveal()}>
-                <span>{exp.title}</span><span>{exp.period}</span>
-              </div>
-              <div className={`${styles.row} ${styles.sub}`} {...reveal()}>
-                <span>{exp.org}</span><span>{exp.where}</span>
-              </div>
-              <ul className={styles.bullets}>
-                {exp.bullets.map((b) => <li key={b} {...reveal()}>{rich(b)}</li>)}
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h2 className={styles.section} {...reveal()}>Projects</h2>
-          <div className={styles.list}>
-            {projects.map((p) => (
-              <div key={p.name} className={styles.entry}>
-                <div className={`${styles.row} ${styles.proj}`} {...reveal()}>
-                  <span>
-                    <a href={p.href} className={styles.projLink}><strong>{p.name}</strong></a>
-                    {" | "}<em>{p.stack}</em>
-                  </span>
-                  <span>{p.period}</span>
+          <section>
+            <h2 className={styles.section} {...reveal()}>Experience</h2>
+            <div className={styles.list}>
+              <div className={styles.entry}>
+                <div className={`${styles.row} ${styles.top}`} {...reveal()}>
+                  <span>{exp.title}</span><span>{exp.period}</span>
+                </div>
+                <div className={`${styles.row} ${styles.sub}`} {...reveal()}>
+                  <span>{exp.org}</span><span>{exp.where}</span>
                 </div>
                 <ul className={styles.bullets}>
-                  {p.bullets.map((b) => <li key={b} {...reveal()}>{rich(b)}</li>)}
+                  {exp.bullets.map((b) => <li key={b} {...reveal()}>{rich(b)}</li>)}
                 </ul>
               </div>
-            ))}
-          </div>
-        </section>
+            </div>
+          </section>
 
-        <section>
-          <h2 className={styles.section} {...reveal()}>Technical Skills</h2>
-          <div className={styles.skills}>
-            {skills.map((t) => (
-              <p key={t.label} {...reveal()}><strong>{t.label}</strong>: {t.items}</p>
-            ))}
-          </div>
-        </section>
+          <section>
+            <h2 className={styles.section} {...reveal()}>Projects</h2>
+            <div className={styles.list}>
+              {projects.map((p) => (
+                <div key={p.name} className={styles.entry}>
+                  <div className={`${styles.row} ${styles.proj}`} {...reveal()}>
+                    <span>
+                      <a href={p.href} className={styles.projLink}><strong>{p.name}</strong></a>
+                      {" | "}<em>{p.stack}</em>
+                    </span>
+                    <span>{p.period}</span>
+                  </div>
+                  <ul className={styles.bullets}>
+                    {p.bullets.map((b) => <li key={b} {...reveal()}>{rich(b)}</li>)}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
 
-      </div>
-    </article>
+          <section>
+            <h2 className={styles.section} {...reveal()}>Technical Skills</h2>
+            <div className={styles.skills}>
+              {skills.map((t) => (
+                <p key={t.label} {...reveal()}><strong>{t.label}</strong>: {t.items}</p>
+              ))}
+            </div>
+          </section>
+
+        </div>
+      </article>
+      <Contact />
+    </>
   );
 }
 
