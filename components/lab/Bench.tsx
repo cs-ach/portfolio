@@ -69,10 +69,6 @@ export default function Bench({
         </header>
 
         <div className={styles.stage} data-reveal>
-          <p className={styles.stageBar}>
-            <span className={styles.live}>Live</span>
-            <span>Runs in this tab · no network · nothing stored</span>
-          </p>
           {children}
         </div>
 

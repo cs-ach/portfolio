@@ -159,25 +159,6 @@
   .stage { padding-inline: 0.5rem; }
 }
 
-.stageBar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--s-1) var(--s-4);
-  font-size: var(--t-small);
-  font-weight: 500;
-  color: var(--b-muted);
-}
-
-.live { display: inline-flex; align-items: center; gap: 0.5em; color: var(--b-ink); }
-.live::before {
-  content: "";
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background: var(--b-accent);
-}
-
 /* ── what's real ────────────────────────────────────────── */
 
 .notes {
