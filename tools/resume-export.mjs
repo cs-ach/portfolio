@@ -130,7 +130,9 @@ const tex = String.raw`%-------------------------
 %----------HEADING----------
 \begin{center}
     \textbf{\Huge \scshape ${esc(PERSON.name)}} \\ \vspace{1pt}
-    \small \href{mailto:${PERSON.email}}{\underline{${esc(PERSON.email)}}} $|$
+    \small ${esc(PERSON.where)} $|$
+    \href{${PERSON.site}}{\underline{${esc(PERSON.siteLabel)}}} $|$
+    \href{mailto:${PERSON.email}}{\underline{${esc(PERSON.email)}}} $|$
     \href{${PERSON.linkedin}}{\underline{${esc(PERSON.linkedinLabel)}}} $|$
     \href{${PERSON.github}}{\underline{${esc(PERSON.githubLabel)}}}
 \end{center}

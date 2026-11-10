@@ -95,7 +95,9 @@
 %----------HEADING----------
 \begin{center}
     \textbf{\Huge \scshape Adwin Chee} \\ \vspace{1pt}
-    \small \href{mailto:adwin.hansen@gmail.com}{\underline{adwin.hansen@gmail.com}} $|$
+    \small Malaysia $|$
+    \href{https://adwin.dev}{\underline{adwin.dev}} $|$
+    \href{mailto:adwin.hansen@gmail.com}{\underline{adwin.hansen@gmail.com}} $|$
     \href{https://www.linkedin.com/in/adwin-chee-42427b354/}{\underline{linkedin.com/in/adwin-chee}} $|$
     \href{https://github.com/cs-ach}{\underline{github.com/cs-ach}}
 \end{center}
@@ -118,14 +120,13 @@
       {Software Engineer Intern}{Apr. 2026 -- Dec. 2026 (Expected)}
       {SeeSharp Solutions Sdn Bhd}{Malaysia}
       \resumeItemListStart
-        \resumeItem{Delivered features across \textbf{seven repositories} (.NET/ABP, Next.js dashboards, native iOS Swift/Android Kotlin, Gatling suite), authoring \textbf{500+ commits}.}
-        \resumeItem{Built multi-tenant infrastructure for a \textbf{WhatsApp Business SaaS}: per-tenant connection strings, Meta Cloud API template quality tracking, consent opt-in/opt-out, and \textbf{Stripe add-on billing} with prorated rates.}
-        \resumeItem{Implemented sign-in, sign-out, and redirect flows for an \textbf{authentication consolidation} of three apps onto one commercial site, with JWT, auto-logout on token expiry, and cross-app redirects.}
-        \resumeItem{Added \textbf{server-side authorization guards} to campaign and automation services after finding inactive templates were rejected only client-side, bypassable via direct API calls.}
-        \resumeItem{Cut a recipient-resolution hot path from an \textbf{N+1 query per recipient to a single batched fetch}, and paginated an unbounded conversation endpoint that loaded entire tenant histories.}
-        \resumeItem{Co-built an internal \textbf{desktop test-automation platform} (Electron, .NET, PostgreSQL) unifying Playwright and Gatling, with script recording, nested preconditions, and a CI layer with API-key auth and remote headless execution.}
-        \resumeItem{Ran \textbf{load, stress, and breakpoint testing} of a high-traffic client web platform across test, staging, and production, fixing \textbf{user-ID collisions} across concurrent virtual users that silently corrupted results.}
-        \resumeItem{Shipped an \textbf{invoice dashboard} (Next.js, TypeScript) with queue-based WhatsApp reminders, plus booking, membership, and shop features for a consumer app's native \textbf{iOS and Android} clients.}
+        \resumeItem{Made releases of a 10-project .NET platform recoverable by reworking its GitHub Actions pipeline: each deploy passes staging first, backs up the database, test-runs migrations on a restored copy before touching live data, and \textbf{rolls back automatically} to the last tagged version if anything fails.}
+        \resumeItem{Stopped a multi-tenant WhatsApp messaging SaaS from double-sending when a campaign retried, so \textbf{retries never resend}, with idempotent sends and race-safe status updates.}
+        \resumeItem{Let tenants receive live message events in their own systems through signed, retried webhooks, checking each target address at send time to block SSRF into internal servers.}
+        \resumeItem{Let tenants add seats, numbers and contacts mid-month and pay only for the days left, by building \textbf{prorated Stripe add-on billing} with one invoice per change, webhook-synced subscriptions and unit-tested day counting.}
+        \resumeItem{Closed an API hole where direct calls could start campaigns on inactive templates, by adding \textbf{server-side authorization} to campaign and automation services that had only checked in the client.}
+        \resumeItem{Sped up campaign sends and the inbox by replacing a per-recipient contact lookup (N+1) with one batched query, and paginating a conversation endpoint that loaded a tenant's entire history.}
+        \resumeItem{Co-built an in-house Playwright and Gatling test tool, and made a client's load-test results trustworthy by fixing user-ID collisions between concurrent virtual users across test, staging and production.}
       \resumeItemListEnd
 
   \resumeSubHeadingListEnd
@@ -135,18 +136,23 @@
 \section{Projects}
     \resumeSubHeadingListStart
       \resumeProjectHeading
+          {\textbf{Desk Companion} $|$ \emph{Rust, Slint, JavaScript, Raspberry Pi}}{Sep. 2026 -- Present}
+          \resumeItemListStart
+            \resumeItem{Let third-party plugins use OAuth accounts without ever seeing the credentials, by running PKCE sign-in and token refresh on the host and giving each plugin a \textbf{token it can spend but not read}, with every host and secret it uses declared in a manifest checked before its code runs.}
+            \resumeItem{Kept one broken plugin from taking down the device by running plugins in an embedded JavaScript runtime limited to fetch, log, config and scoped secrets, and stopping any that fail repeatedly.}
+            \resumeItem{Stopped a flaky serial link from corrupting host-to-device messages with a \textbf{length-prefixed, versioned protocol} that negotiates its baud rate and refuses to talk on a version mismatch.}
+          \resumeItemListEnd
+      \resumeProjectHeading
           {\textbf{Zero Trust Architecture Platform} $|$ \emph{Node.js, React, TypeScript, JWT, WebCrypto}}{Oct. 2025 -- Dec. 2025}
           \resumeItemListStart
-            \resumeItem{Designed a \textbf{continuous-verification session engine} that scores every request rather than trusting a valid credential, accumulating risk from IP changes, idle time, and request-rate anomalies to maintain a live per-session trust score.}
-            \resumeItem{Bound \textbf{token lifetime to trust level} --- 2 hours at full trust, degrading to 5 minutes below a 70 threshold --- with automatic session revocation under 60 and \textbf{step-up authentication} triggered in the 60--80 band.}
-            \resumeItem{Implemented \textbf{hybrid encryption} for file storage: AES-256-GCM authenticated encryption with per-payload IVs, wrapped by RSA-2048 OAEP key encapsulation, plus PBKDF2-SHA256 password hashing at 200,000 iterations.}
-            \resumeItem{Defended against token tampering by pairing JWT signature validation with an independent \textbf{HMAC-SHA256 nonce} and device-ID binding, recomputed and verified on every request.}
+            \resumeItem{Cut how long a stolen session stays useful to \textbf{5 minutes} once its behaviour looks off (2 hours at full trust, revoked below a score of 60), by scoring every request on IP changes, idle time and request rate.}
+            \resumeItem{Protected stored files and passwords from theft with \textbf{hybrid encryption} (AES-256-GCM, keys wrapped with RSA-2048 OAEP) and 200,000-iteration PBKDF2-SHA256 hashing, built on WebCrypto.}
+            \resumeItem{Rejected forged and replayed tokens even when their JWT signature checks out, by binding each session to an HMAC-SHA256 nonce and device ID and verifying both on every request.}
           \resumeItemListEnd
       \resumeProjectHeading
           {\textbf{Neobank Prototype} $|$ \emph{Node.js, Express, WebCrypto}}{Dec. 2025}
           \resumeItemListStart
-            \resumeItem{Applied the zero-trust session and cryptography layers to a \textbf{digital banking prototype}, placing account and transaction endpoints behind the same continuous-verification model.}
-            \resumeItem{Layered the backend (route, service, infrastructure) with centralised logging and encrypted-at-rest account records.}
+            \resumeItem{Made transfers in a \textbf{digital banking prototype} all-or-nothing, so a failure never debits one account without crediting the other, with atomic database transactions, and made payment requests HMAC-signed, expiring and single-use.}
           \resumeItemListEnd
     \resumeSubHeadingListEnd
 
@@ -155,11 +161,11 @@
 \section{Technical Skills}
  \begin{itemize}[leftmargin=0.15in, label={}]
     \small{\item{
-     \textbf{Languages}{: C\#, TypeScript, JavaScript, Java, Swift, Kotlin, Python, SQL, HTML/CSS} \\
-     \textbf{Frameworks}{: .NET, ABP Framework, React, Next.js, Node.js, Electron, Express, Hangfire} \\
-     \textbf{Security}{: Zero Trust architecture, AES-256-GCM, RSA-OAEP, PBKDF2, HMAC, JWT, OAuth/OpenIddict, threat modelling} \\
-     \textbf{Testing}{: Playwright, Gatling, load, stress \& breakpoint testing} \\
-     \textbf{Tools \& Databases}{: Git, Docker, GitHub Actions, Postman, Maven, PostgreSQL, SQLite, Stripe}
+     \textbf{Languages}{: C\#, TypeScript, Rust, JavaScript, Java, Swift, Kotlin, Python, SQL, HTML/CSS} \\
+     \textbf{Frameworks}{: .NET, ABP Framework, React, Next.js, Node.js, Electron, Express, Hangfire, Slint} \\
+     \textbf{Security}{: Zero Trust, AES-256-GCM, RSA-OAEP, PBKDF2, HMAC, JWT, OAuth/OpenIddict, SSRF prevention} \\
+     \textbf{Testing}{: Playwright, Gatling, Vitest, xUnit, load, stress \& breakpoint testing} \\
+     \textbf{Tools \& Databases}{: Git, GitHub Actions (CI/CD), Docker, nginx, Postman, Maven, PostgreSQL, SQLite, Stripe}
     }}
  \end{itemize}
 

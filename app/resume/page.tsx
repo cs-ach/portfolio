@@ -65,6 +65,10 @@ export default function Resume() {
           <header className={styles.head}>
             <p className={styles.name} {...reveal()}>{PERSON.name}</p>
             <p className={styles.contact} {...reveal()}>
+              <span>{PERSON.where}</span>
+              <span className={styles.sep}>|</span>
+              <a href={PERSON.site}>{PERSON.siteLabel}</a>
+              <span className={styles.sep}>|</span>
               <a href={`mailto:${PERSON.email}`}>{PERSON.email}</a>
               <span className={styles.sep}>|</span>
               <a href={PERSON.linkedin} rel="noreferrer">{PERSON.linkedinLabel}</a>
