@@ -468,5 +468,6 @@ export const RESUME = {
     { label: "Security", items: "Zero Trust, AES-256-GCM, RSA-OAEP, PBKDF2, HMAC, JWT, OAuth/OpenIddict, SSRF prevention" },
     { label: "Testing", items: "Playwright, Gatling, Vitest, xUnit, load, stress & breakpoint testing" },
     { label: "Tools & Databases", items: "Git, GitHub Actions (CI/CD), Docker, nginx, Postman, Maven, PostgreSQL, SQLite, Stripe" },
+    { label: "Training", items: "AWS Cloud Practitioner Essentials (AWS Skill Builder), Cisco Networking Academy: Packet Tracer" },
   ],
 };
